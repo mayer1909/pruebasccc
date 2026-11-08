@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EPI PREORDER - Pruebas CCC</title>
+  <title>EPI PREORDER - Control de Roles & POS</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -58,7 +58,7 @@
           <i class="fa-solid fa-gem"></i>
         </div>
         <h1 class="text-2xl font-black tracking-tight text-white">EPI PREORDER</h1>
-        <p class="text-xs text-purple-300 font-medium">Entorno: pruebas-ccc-e1f3e</p>
+        <p class="text-xs text-purple-300 font-medium">Control de Créditos & POS</p>
       </div>
 
       <div id="loginErrorMsg" class="hidden p-3 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2">
@@ -109,17 +109,27 @@
             <div>
               <div class="flex items-center gap-2">
                 <span class="font-black text-slate-900 tracking-tight text-lg">EPI PREORDER</span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-100 text-purple-800 border border-purple-200">Pruebas</span>
+                <span id="userRoleBadge" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-100 text-purple-800 border border-purple-200">Cajero</span>
               </div>
-              <p class="text-[11px] text-slate-400 hidden sm:block">Proyecto: pruebas-ccc-e1f3e</p>
+              <p id="userEmailText" class="text-[11px] text-slate-400 hidden sm:block">cajero@epipreorder.com</p>
             </div>
           </div>
 
-          <!-- PESTAÑAS (ESTILO FINA) -->
+          <!-- TASA DEL DÍA -->
+          <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-xl">
+            <i class="fa-solid fa-money-bill-transfer text-emerald-600 text-xs"></i>
+            <span class="text-xs font-bold text-emerald-900">Tasa:</span>
+            <div class="flex items-center gap-1">
+              <span class="text-xs font-bold text-slate-500">Bs.</span>
+              <input type="number" step="0.01" id="exchangeRateInput" onchange="updateExchangeRate(this.value)" class="w-20 px-2 py-0.5 text-xs font-black text-emerald-700 bg-white border border-emerald-300 rounded-lg text-right focus:outline-none focus:ring-1 focus:ring-emerald-500" value="36.50">
+            </div>
+          </div>
+
+          <!-- PESTAÑAS (TABS) -->
           <nav class="flex items-center bg-slate-100 p-1 rounded-2xl gap-1">
             <button type="button" onclick="switchMainTab('clients')" id="tabBtnClients" class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-bold rounded-xl bg-white text-purple-700 shadow-sm transition flex items-center gap-1.5">
               <i class="fa-solid fa-users"></i>
-              <span class="hidden md:inline">Clientes & Crédito</span>
+              <span class="hidden md:inline">Cartera & Crédito</span>
               <span class="md:hidden">Clientes</span>
             </button>
             <button type="button" onclick="switchMainTab('inventory')" id="tabBtnInventory" class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
@@ -127,9 +137,14 @@
               <span class="hidden md:inline">Catálogo & Stock</span>
               <span class="md:hidden">Stock</span>
             </button>
-            <button type="button" onclick="openBrandReportModal()" class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+            <button type="button" onclick="openCashRegisterModal()" class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-xl bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-cash-register text-amber-600"></i>
+              <span>Caja</span>
+            </button>
+            <!-- REPORTE: RESTRINGIDO PARA CAJEROS -->
+            <button type="button" id="btnTopReport" onclick="openBrandReportModal()" class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
               <i class="fa-solid fa-chart-pie"></i>
-              <span>Reporte</span>
+              <span>Reportes</span>
             </button>
           </nav>
 
@@ -154,10 +169,10 @@
       </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- CUERPO PRINCIPAL -->
     <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
-      <!-- VISTA: CLIENTES & CRÉDITO -->
+      <!-- VISTA 1: CARTERA & CRÉDITO -->
       <div id="viewClients" class="space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="bg-white p-5 rounded-2xl border border-rose-200 shadow-sm flex flex-col justify-between">
@@ -167,7 +182,7 @@
             </div>
             <div class="mt-2">
               <h3 id="statTotalDebt" class="text-2xl font-black text-rose-700">$0.00</h3>
-              <p class="text-[11px] text-slate-400">Total en facturas pendientes</p>
+              <p id="statTotalDebtBs" class="text-[11px] font-bold text-slate-400">Bs. 0.00</p>
             </div>
           </div>
 
@@ -178,7 +193,7 @@
             </div>
             <div class="mt-2">
               <h3 id="statTotalPaid" class="text-2xl font-black text-emerald-700">$0.00</h3>
-              <p class="text-[11px] text-slate-400">Total cobrado en abonos</p>
+              <p id="statTotalPaidBs" class="text-[11px] font-bold text-slate-400">Bs. 0.00</p>
             </div>
           </div>
 
@@ -200,17 +215,17 @@
             </div>
             <div class="mt-2">
               <h3 id="statTotalClients" class="text-2xl font-black text-indigo-700">0</h3>
-              <p class="text-[11px] text-slate-400">Registrados en la nube</p>
+              <p class="text-[11px] text-slate-400">Registrados</p>
             </div>
           </div>
         </div>
 
-        <!-- TABLA DE CLIENTES -->
+        <!-- TABLA DE CLIENTES Y MONITOREO DE CUOTAS -->
         <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
           <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
               <h2 class="text-lg font-bold text-slate-900">Listado de Clientes y Cuentas por Cobrar</h2>
-              <p class="text-xs text-slate-500">Facturas emitidas y saldos pendientes en tiempo real.</p>
+              <p class="text-xs text-slate-500">Muestra saldos totales y el estado de vencimiento de las cuotas.</p>
             </div>
 
             <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
@@ -221,6 +236,7 @@
 
               <select id="filterStatus" onchange="renderClientsTable()" class="px-3 py-2 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-700">
                 <option value="debt" selected>Con Saldo Pendiente</option>
+                <option value="overdue">Facturas Vencidas / En Mora</option>
                 <option value="all">Todos los clientes</option>
                 <option value="paid">Solventes / Al Día ($0.00)</option>
               </select>
@@ -239,19 +255,19 @@
                   <th class="py-3.5 px-4 text-center">Facturas</th>
                   <th class="py-3.5 px-4 text-right">Total Compras</th>
                   <th class="py-3.5 px-4 text-right">Total Abonado</th>
-                  <th class="py-3.5 px-4 text-right">Saldo Deudor</th>
-                  <th class="py-3.5 px-4 text-center">Estado</th>
+                  <th class="py-3.5 px-4 text-right">Saldo Deudor ($ / Bs.)</th>
+                  <th class="py-3.5 px-4 text-center">Estado / Vencimiento</th>
                   <th class="py-3.5 px-4 sm:px-6 text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody id="clientsTableBody" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
-          <div id="noDataMessage" class="hidden py-12 text-center text-slate-500 text-sm">No se encontraron clientes registrados.</div>
+          <div id="noDataMessage" class="hidden py-12 text-center text-slate-500 text-sm">No se encontraron clientes registrados con los filtros aplicados.</div>
         </div>
       </div>
 
-      <!-- VISTA: CATÁLOGO & STOCK -->
+      <!-- VISTA 2: CATÁLOGO & STOCK -->
       <div id="viewInventory" class="hidden space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="bg-white p-5 rounded-2xl border border-purple-200 shadow-sm flex flex-col justify-between">
@@ -260,9 +276,9 @@
             <p class="text-[11px] text-slate-400">En catálogo activo</p>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-indigo-200 shadow-sm flex flex-col justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Valor de Inventario (Venta)</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Valor Inventario (Venta)</span>
             <h3 id="statInventoryValue" class="text-2xl font-black text-indigo-900 mt-2">$0.00</h3>
-            <p class="text-[11px] text-slate-400">Total existencias x precio</p>
+            <p id="statInventoryValueBs" class="text-[11px] font-bold text-slate-400">Bs. 0.00</p>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm flex flex-col justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Stock Crítico (&lt; 3 unid.)</span>
@@ -296,9 +312,9 @@
                 <tr class="bg-slate-50/80 text-slate-500 uppercase font-semibold text-xs border-b border-slate-200">
                   <th class="py-3.5 px-4 sm:px-6">Producto / Referencia</th>
                   <th class="py-3.5 px-4 text-center">Stock Actual</th>
-                  <th class="py-3.5 px-4 text-right">P. Costo ($)</th>
-                  <th class="py-3.5 px-4 text-right">P. Venta ($)</th>
-                  <th class="py-3.5 px-4 text-right">Ganancia Est.</th>
+                  <th class="cost-col py-3.5 px-4 text-right">P. Costo ($)</th>
+                  <th class="py-3.5 px-4 text-right">P. Venta ($ / Bs.)</th>
+                  <th class="profit-col py-3.5 px-4 text-right">Ganancia Est.</th>
                   <th class="py-3.5 px-4 sm:px-6 text-center">Acciones</th>
                 </tr>
               </thead>
@@ -311,7 +327,148 @@
     </main>
   </div>
 
-  <!-- MODAL: REGISTRAR PRODUCTO -->
+  <!-- MODAL: HISTORIAL DEL CLIENTE -->
+  <div id="modalClientHistory" class="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5 modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden modal-card">
+      <div class="p-5 border-b border-slate-200 bg-slate-50/90 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-500 via-indigo-600 to-pink-600 text-white flex items-center justify-center font-bold text-xl shadow">
+            <span id="detailClientAvatar">C</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h2 id="detailClientName" class="text-lg font-bold text-slate-900">Nombre del Cliente</h2>
+              <span id="detailClientBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold">Estado</span>
+              <button type="button" onclick="triggerEditClientFromHistory()" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition inline-flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-user-pen text-[11px]"></i> Editar Cliente
+              </button>
+            </div>
+            <p class="text-xs text-slate-500 flex items-center gap-3 mt-1 flex-wrap">
+              <span><i class="fa-regular fa-id-card text-slate-400"></i> <span id="detailClientDoc">Doc</span></span>
+              <span><i class="fa-solid fa-phone text-slate-400"></i> <span id="detailClientPhone">Tel</span></span>
+            </p>
+            <p id="detailClientAddressText" class="text-[11px] text-slate-500 mt-0.5 truncate max-w-md"></p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="text-right">
+            <span class="text-xs uppercase font-bold text-slate-400">Deuda Total Acumulada</span>
+            <div id="detailClientBalance" class="text-2xl sm:text-3xl font-black text-rose-600">$0.00</div>
+            <div id="detailClientBalanceBs" class="text-xs font-bold text-slate-400">Bs. 0.00</div>
+          </div>
+          <button type="button" onclick="closeClientHistoryModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-200 transition">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="px-5 py-3 border-b border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+          <button type="button" onclick="setHistoryFilter('all')" id="btnFilterAll" class="px-3 py-1 text-xs font-semibold rounded-lg bg-white shadow-sm text-slate-800">Todos</button>
+          <button type="button" onclick="setHistoryFilter('sales')" id="btnFilterSales" class="px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900">Solo Facturas</button>
+          <button type="button" onclick="setHistoryFilter('payments')" id="btnFilterPayments" class="px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900">Solo Abonos</button>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button type="button" onclick="triggerSaleFromHistory()" class="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-bold hover:bg-purple-700 transition flex items-center gap-1"><i class="fa-solid fa-plus"></i> Nueva Factura</button>
+          <button type="button" onclick="triggerPaymentFromHistory()" class="px-3 py-1.5 bg-fintech-600 text-white rounded-lg text-xs font-bold hover:bg-fintech-700 transition flex items-center gap-1"><i class="fa-solid fa-hand-holding-dollar"></i> Abonar</button>
+          <button type="button" onclick="sendWhatsAppSummary()" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition flex items-center gap-1"><i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp</button>
+          <button type="button" onclick="printAccountStatement()" class="px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition flex items-center gap-1"><i class="fa-solid fa-print"></i> Estado de Cuenta</button>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5">
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="text-xs uppercase font-semibold text-slate-400 border-b border-slate-200 pb-2">
+              <th class="py-2.5 px-3">Fecha / Vence</th>
+              <th class="py-2.5 px-3">Nº Factura / Movimiento</th>
+              <th class="py-2.5 px-3">Tipo / Detalle</th>
+              <th class="py-2.5 px-3 text-right">Monto ($ / Bs.)</th>
+              <th class="py-2.5 px-3 text-right">Saldo de Factura</th>
+              <th class="py-2.5 px-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody" class="divide-y divide-slate-100"></tbody>
+        </table>
+        <div id="noHistoryMessage" class="hidden py-12 text-center text-slate-400 text-sm">No hay movimientos registrados para este cliente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CIERRE DE CAJA DIARIO -->
+  <div id="modalCashRegister" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5 modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[94vh] flex flex-col overflow-hidden modal-card border border-slate-200">
+      <div class="p-5 border-b border-slate-200 bg-gradient-to-r from-amber-500 to-amber-600 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-cash-register text-2xl"></i>
+          <div>
+            <h2 class="text-lg font-bold">Cuadre y Cierre de Caja Diario</h2>
+            <p class="text-xs text-amber-100">Arqueo de ingresos por canal y conciliación de diferencias</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeModalDirect('modalCashRegister')" class="text-amber-100 hover:text-white p-2 rounded-xl transition">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+        <div class="flex items-center justify-between bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs">
+          <span class="font-bold text-slate-700 uppercase">Fecha del Cuadre:</span>
+          <input type="date" id="cashRegisterDate" onchange="calculateCashRegister()" class="px-3 py-1.5 rounded-xl border border-slate-300 font-bold text-slate-800 focus:ring-2 focus:ring-amber-500">
+        </div>
+
+        <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="bg-slate-100 text-slate-600 uppercase font-semibold text-[11px] border-b border-slate-200">
+                <th class="py-2.5 px-3">Método de Pago</th>
+                <th class="py-2.5 px-3 text-center">Operaciones</th>
+                <th class="py-2.5 px-3 text-right">Total ($ USD)</th>
+                <th class="py-2.5 px-3 text-right">Total (Bs.)</th>
+              </tr>
+            </thead>
+            <tbody id="cashRegisterMethodsBody" class="divide-y divide-slate-100 font-medium"></tbody>
+            <tfoot>
+              <tr class="bg-amber-50/70 font-black border-t-2 border-amber-200 text-amber-950">
+                <td class="py-3 px-3">TOTAL RECAUDADO DEL DÍA</td>
+                <td id="crTotalCount" class="py-3 px-3 text-center">0</td>
+                <td id="crTotalUSD" class="py-3 px-3 text-right">$0.00</td>
+                <td id="crTotalBs" class="py-3 px-3 text-right">Bs. 0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+          <h4 class="text-xs font-bold uppercase text-slate-700 tracking-wider">Conciliación de Efectivo en Caja</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1">Efectivo Físico Contado ($ USD):</label>
+              <input type="number" step="0.01" id="crPhysicalCashUSD" oninput="calculateDifference()" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-black text-slate-800">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1">Efectivo Físico Contado (Bs.):</label>
+              <input type="number" step="0.01" id="crPhysicalCashBs" oninput="calculateDifference()" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-black text-slate-800">
+            </div>
+          </div>
+          <div id="crDifferenceBox" class="p-3 rounded-xl border text-xs font-bold flex justify-between items-center bg-white border-slate-200">
+            <span>Diferencia en Caja (Sobrante / Faltante):</span>
+            <span id="crDifferenceText" class="text-sm font-black text-slate-700">$0.00 USD</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-2">
+        <button type="button" onclick="closeModalDirect('modalCashRegister')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Cerrar</button>
+        <button type="button" onclick="printCashRegisterReport()" class="px-5 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-white shadow transition flex items-center gap-1.5">
+          <i class="fa-solid fa-print"></i> Imprimir Arqueo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRAR / EDITAR PRODUCTO -->
   <div id="modalProduct" class="fixed inset-0 z-[70] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 modal-backdrop">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform modal-card border border-purple-200">
       <div class="px-6 py-4 border-b border-purple-100 bg-purple-50/60 flex items-center justify-between">
@@ -341,12 +498,12 @@
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Precio Costo ($)</label>
+          <div class="cost-field">
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Precio Costo ($ USD)</label>
             <input type="number" min="0" step="0.01" id="prodFormCost" placeholder="0.00" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Precio Venta ($) *</label>
+          <div class="w-full">
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Precio Venta ($ USD) *</label>
             <input type="number" min="0.01" step="0.01" id="prodFormPrice" required placeholder="0.00" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 font-black text-purple-900">
           </div>
         </div>
@@ -376,8 +533,24 @@
             <select id="saleClientId" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500"></select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha de Factura *</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha de Emisión *</label>
             <input type="date" id="saleDate" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 bg-purple-50/50 rounded-2xl border border-purple-100">
+          <div>
+            <label class="block text-xs font-bold text-purple-900 uppercase mb-1">Plan de Cuotas</label>
+            <select id="saleInstallments" class="w-full px-3 py-2 text-xs rounded-xl border border-purple-200 bg-white font-semibold text-slate-700">
+              <option value="1">1 Pago Único</option>
+              <option value="2" selected>2 Cuotas Quincenales</option>
+              <option value="3">3 Cuotas</option>
+              <option value="4">4 Cuotas Semanales</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-purple-900 uppercase mb-1">Fecha Límite / Vencimiento *</label>
+            <input type="date" id="saleDueDate" required class="w-full px-3 py-2 text-xs rounded-xl border border-purple-200 bg-white font-semibold text-slate-700">
           </div>
         </div>
 
@@ -400,7 +573,7 @@
                 <tr class="text-slate-500 uppercase font-semibold border-b border-purple-100 pb-1">
                   <th class="py-2 px-2">Seleccionar de Catálogo / Escribir</th>
                   <th class="py-2 px-1 w-20 text-center">Cant.</th>
-                  <th class="py-2 px-1 w-24 text-right">P. Costo ($)</th>
+                  <th class="cost-col py-2 px-1 w-24 text-right">P. Costo ($)</th>
                   <th class="py-2 px-1 w-24 text-right">P. Venta ($)</th>
                   <th class="py-2 px-2 w-24 text-right">Subtotal ($)</th>
                   <th class="py-2 px-1 w-10 text-center"></th>
@@ -415,17 +588,18 @@
               <span class="text-[10px] uppercase font-bold text-slate-400 block">Total Artículos</span>
               <span id="saleSummaryQty" class="text-sm font-black text-slate-800">0</span>
             </div>
-            <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+            <div class="cost-summary bg-white p-2.5 rounded-xl border border-slate-200">
               <span class="text-[10px] uppercase font-bold text-slate-400 block">Costo Total ($)</span>
               <span id="saleSummaryCost" class="text-sm font-bold text-slate-700">$0.00</span>
             </div>
-            <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
+            <div class="profit-summary bg-white p-2.5 rounded-xl border border-emerald-200">
               <span class="text-[10px] uppercase font-bold text-emerald-600 block">Ganancia Est.</span>
               <span id="saleSummaryProfit" class="text-sm font-black text-emerald-600">$0.00</span>
             </div>
             <div class="bg-purple-100/70 p-2.5 rounded-xl border border-purple-300">
               <span class="text-[10px] uppercase font-black text-purple-700 block">Total Factura</span>
               <span id="saleSummaryTotal" class="text-base font-black text-purple-900">$0.00</span>
+              <span id="saleSummaryTotalBs" class="text-[10px] font-bold text-purple-700 block mt-0.5">Bs. 0.00</span>
             </div>
           </div>
         </div>
@@ -445,19 +619,26 @@
     </div>
   </div>
 
-  <!-- MODAL: REGISTRAR ABONO A FACTURA -->
-  <div id="modalPayment" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 modal-backdrop">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform modal-card border border-emerald-200">
+  <!-- MODAL: REGISTRAR ABONO (PAGO MIXTO) -->
+  <div id="modalPayment" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5 modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[94vh] flex flex-col overflow-hidden modal-card border border-emerald-200">
       <div class="px-6 py-4 border-b border-emerald-100 bg-emerald-50/80 flex items-center justify-between">
         <h3 class="text-base font-bold text-emerald-900 flex items-center gap-2">
-          <i class="fa-solid fa-hand-holding-dollar text-fintech-600"></i> Registrar Abono a Factura
+          <i class="fa-solid fa-hand-holding-dollar text-fintech-600"></i> Registrar Abono (Pago Simple o Mixto)
         </h3>
-        <button type="button" onclick="dismissActionModal('modalPayment')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <button type="button" onclick="dismissActionModal('modalPayment')" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
-      <form id="paymentForm" onsubmit="handleSavePayment(event)" class="p-6 space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Cliente *</label>
-          <select id="paymentClientId" onchange="onPaymentClientChanged()" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-fintech-500"></select>
+
+      <form id="paymentForm" onsubmit="handleSavePayment(event)" class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Cliente *</label>
+            <select id="paymentClientId" onchange="onPaymentClientChanged()" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-fintech-500"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha de Abono *</label>
+            <input type="date" id="paymentDate" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-fintech-500">
+          </div>
         </div>
 
         <div>
@@ -468,48 +649,63 @@
         </div>
 
         <div class="p-3.5 rounded-xl border bg-slate-50 border-slate-200 flex justify-between items-center">
-          <span id="paymentDebtLabelText" class="text-xs font-bold uppercase text-slate-500">Saldo Pendiente de la Factura:</span>
+          <div>
+            <span class="text-xs font-bold uppercase text-slate-500 block">Saldo Actual de la Factura:</span>
+            <span id="paymentSelectedBrandDebtAmountBs" class="text-[11px] font-bold text-slate-400">Bs. 0.00</span>
+          </div>
           <span id="paymentSelectedBrandDebtAmount" class="text-base font-black text-rose-600">$0.00 USD</span>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Fecha *</label>
-            <input type="date" id="paymentDate" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-fintech-500">
+        <!-- MÓDULO DE MÉTODOS DE PAGO MIXTOS -->
+        <div class="border border-emerald-200 rounded-2xl p-4 bg-emerald-50/30 space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
+                <i class="fa-solid fa-coins text-emerald-600"></i> Desglose de Pagos Recibidos
+              </h4>
+              <p class="text-[11px] text-slate-500">Puedes combinar efectivo, bolívares (tasa del día), Zelle, etc.</p>
+            </div>
+            <button type="button" onclick="addPaymentSplitRow()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition inline-flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-plus text-[10px]"></i> Añadir Método
+            </button>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Monto a Abonar ($ USD) *</label>
-            <input type="number" step="0.01" min="0.01" id="paymentAmountUSD" required placeholder="0.00" oninput="validatePaymentAmountStrictly()" class="w-full px-3 py-2 text-sm font-bold text-fintech-700 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-fintech-500">
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse min-w-[500px]">
+              <thead>
+                <tr class="text-slate-500 uppercase font-semibold border-b border-emerald-100 pb-1">
+                  <th class="py-2 px-2">Método</th>
+                  <th class="py-2 px-2 w-32">Monto Original</th>
+                  <th class="py-2 px-2 w-28 text-right">Equiv. ($ USD)</th>
+                  <th class="py-2 px-2">Nº Ref / Comprobante</th>
+                  <th class="py-2 px-1 w-10 text-center"></th>
+                </tr>
+              </thead>
+              <tbody id="paymentSplitRowsBody" class="divide-y divide-emerald-100/60"></tbody>
+            </table>
+          </div>
+
+          <div class="pt-2 border-t border-emerald-200 flex justify-between items-center bg-white p-3 rounded-xl">
+            <div>
+              <span class="text-xs font-bold text-slate-500 block uppercase">Total Abonado a Cuenta:</span>
+              <span id="paymentSplitTotalBs" class="text-[11px] font-bold text-slate-400">Bs. 0.00</span>
+            </div>
+            <div class="text-right">
+              <span id="paymentSplitTotalUSD" class="text-lg font-black text-emerald-700">$0.00 USD</span>
+            </div>
           </div>
         </div>
 
         <div id="paymentAmountErrorBox" class="hidden p-2.5 rounded-xl bg-rose-50 border border-rose-300 text-rose-700 text-xs font-bold">
-          El monto excede el saldo pendiente de la factura.
+          El monto total excede el saldo pendiente de la factura.
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Método de Pago *</label>
-          <select id="paymentMethod" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-fintech-500">
-            <option value="Efectivo ($ USD)">💵 Efectivo ($ USD)</option>
-            <option value="Zelle">🇺🇸 Zelle</option>
-            <option value="Bolívares (Bs.)">🇻🇪 Bolívares</option>
-            <option value="USDT (Binance)">🪙 USDT</option>
-            <option value="Otro">💳 Otro</option>
-          </select>
+          <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nota Adicional / Observaciones</label>
+          <input type="text" id="paymentNotes" placeholder="Detalle o nota del abono..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-fintech-500">
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nº Comprobante / Ref</label>
-            <input type="text" id="paymentRef" placeholder="Ej. Zelle #4590, Ref 1234..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-fintech-500">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nota Adicional</label>
-            <input type="text" id="paymentNotes" placeholder="Detalle o nota del abono..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-fintech-500">
-          </div>
-        </div>
-
-        <div class="pt-2 flex justify-end gap-2">
+        <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
           <button type="button" onclick="dismissActionModal('modalPayment')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition">Cancelar</button>
           <button type="submit" id="btnSubmitPayment" class="px-5 py-2 text-sm font-bold text-white bg-fintech-600 hover:bg-fintech-700 rounded-xl transition shadow-sm">Procesar Abono a Factura</button>
         </div>
@@ -587,68 +783,15 @@
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-          <button type="button" onclick="confirmDeleteClient(document.getElementById('editClientId').value)" class="px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition inline-flex items-center gap-1.5">
+          <button type="button" onclick="confirmDeleteClient(document.getElementById('editClientId').value)" class="admin-only px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition inline-flex items-center gap-1.5">
             <i class="fa-regular fa-trash-can"></i> Eliminar Cliente
           </button>
-          <div class="flex gap-2">
+          <div class="flex gap-2 ml-auto">
             <button type="button" onclick="dismissActionModal('modalEditClient')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition">Cancelar</button>
             <button type="submit" class="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition shadow-sm">Guardar Cambios</button>
           </div>
         </div>
       </form>
-    </div>
-  </div>
-
-  <!-- MODAL: HISTORIAL DE CLIENTE -->
-  <div id="modalClientHistory" class="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5 modal-backdrop">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden modal-card">
-      <div class="p-5 border-b border-slate-200 bg-slate-50/90 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-3.5">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-500 via-indigo-600 to-pink-600 text-white flex items-center justify-center font-bold text-xl shadow">
-            <span id="detailClientAvatar">C</span>
-          </div>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <h2 id="detailClientName" class="text-lg font-bold text-slate-900">Nombre del Cliente</h2>
-              <span id="detailClientBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold">Estado</span>
-              <button type="button" onclick="triggerEditClientFromHistory()" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition inline-flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-user-pen text-[11px]"></i> Editar
-              </button>
-            </div>
-            <p class="text-xs text-slate-500 flex items-center gap-3 mt-1 flex-wrap">
-              <span><i class="fa-regular fa-id-card text-slate-400"></i> <span id="detailClientDoc">Doc</span></span>
-              <span><i class="fa-solid fa-phone text-slate-400"></i> <span id="detailClientPhone">Tel</span></span>
-            </p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-4">
-          <div class="text-right">
-            <span class="text-xs uppercase font-bold text-slate-400">Saldo Pendiente</span>
-            <div id="detailClientBalance" class="text-2xl sm:text-3xl font-black text-rose-600">$0.00</div>
-          </div>
-          <button type="button" onclick="closeClientHistoryModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-200 transition">
-            <i class="fa-solid fa-xmark text-xl"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-5">
-        <table class="w-full text-left text-sm border-collapse">
-          <thead>
-            <tr class="text-xs uppercase font-semibold text-slate-400 border-b border-slate-200 pb-2">
-              <th class="py-2.5 px-3">Fecha</th>
-              <th class="py-2.5 px-3">Nº Factura / Movimiento</th>
-              <th class="py-2.5 px-3">Tipo / Método</th>
-              <th class="py-2.5 px-3 text-right">Monto</th>
-              <th class="py-2.5 px-3 text-right">Saldo Pendiente</th>
-              <th class="py-2.5 px-3 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="historyTableBody" class="divide-y divide-slate-100"></tbody>
-        </table>
-        <div id="noHistoryMessage" class="hidden py-12 text-center text-slate-400 text-sm">No hay movimientos registrados.</div>
-      </div>
     </div>
   </div>
 
@@ -660,7 +803,7 @@
           <i class="fa-solid fa-chart-pie text-2xl text-purple-400"></i>
           <div>
             <h2 class="text-lg font-bold text-white">Reporte Financiero de Facturación</h2>
-            <p class="text-xs text-slate-300">Resumen por rango de fecha.</p>
+            <p class="text-xs text-slate-300">Resumen multimoneda por rango de fecha.</p>
           </div>
         </div>
         <button type="button" onclick="closeModalDirect('modalBrandReport')" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition">
@@ -707,10 +850,10 @@
                   <th class="py-3 px-4">Fecha</th>
                   <th class="py-3 px-4">Nº Factura</th>
                   <th class="py-3 px-4">Cliente</th>
-                  <th class="py-3 px-4 text-right">Facturado</th>
-                  <th class="py-3 px-4 text-right">Pagado</th>
-                  <th class="py-3 px-4 text-right">Ganancia</th>
-                  <th class="py-3 px-4 text-right">Saldo</th>
+                  <th class="py-3 px-4 text-right">Facturado ($)</th>
+                  <th class="py-3 px-4 text-right">Pagado ($)</th>
+                  <th class="py-3 px-4 text-right">Ganancia ($)</th>
+                  <th class="py-3 px-4 text-right">Saldo ($)</th>
                   <th class="py-3 px-4 text-center">Estado</th>
                 </tr>
               </thead>
@@ -725,7 +868,7 @@
     </div>
   </div>
 
-  <!-- MODAL: RECIBO -->
+  <!-- MODAL: RECIBO DE PAGO -->
   <div id="modalReceipt" class="fixed inset-0 z-[65] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 modal-backdrop">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden p-6 space-y-4 modal-card">
       <div id="receiptContent" class="space-y-4 text-center"></div>
@@ -742,7 +885,6 @@
 
   <!-- JAVASCRIPT: LÓGICA VINCULADA AL PROYECTO pruebas-ccc-e1f3e -->
   <script>
-    // CREDENCIALES EXACTAS DE pruebas-ccc-e1f3e
     const firebaseConfig = {
       apiKey: "AIzaSyBlilWdMRegxBiO0UBPhq8HD8xz2dHaaPY",
       authDomain: "pruebas-ccc-e1f3e.firebaseapp.com",
@@ -765,23 +907,29 @@
       console.warn("Modo local activo:", e);
     }
 
-    const STORAGE_KEY = 'credicontrol_pruebas_data_v1';
+    const STORAGE_KEY = 'credicontrol_pruebas_data_v2';
+    const RATE_KEY = 'credicontrol_exchange_rate_v1';
     const BRAND_NAME = "EPI PREORDER";
 
     let appData = { clients: [], transactions: [], products: [] };
+    let exchangeRate = parseFloat(localStorage.getItem(RATE_KEY)) || 36.50;
+    let currentUserRole = 'cashier'; // Rol por defecto: 'cashier' o 'admin'
     let currentClientIdForDetail = null;
+    let currentHistoryFilter = 'all';
     let returnToHistoryOnClose = false;
 
     window.onload = function() {
       loadData();
       setDefaultDates();
 
+      const rateInput = document.getElementById('exchangeRateInput');
+      if (rateInput) rateInput.value = exchangeRate.toFixed(2);
+
       if (auth) {
         auth.onAuthStateChanged((user) => {
           if (user) {
             console.log("Sesión autenticada en Firebase:", user.email);
-            showAppScreen();
-            startCloudSync();
+            fetchUserRole(user.uid, user.email);
           } else {
             showLoginScreen();
           }
@@ -790,6 +938,85 @@
         showLoginScreen();
       }
     };
+
+    async function fetchUserRole(uid, email) {
+      currentUserRole = 'cashier'; // Restringido por defecto
+      if (db) {
+        try {
+          const doc = await db.collection("users").doc(uid).get();
+          if (doc.exists && doc.data().role) {
+            currentUserRole = doc.data().role.toLowerCase();
+          } else {
+            // Si el correo contiene 'admin', se le asigna rol admin para facilitar pruebas
+            if (email.toLowerCase().includes('admin')) {
+              currentUserRole = 'admin';
+            }
+          }
+        } catch (err) {
+          console.warn("Error leyendo rol en Firestore:", err);
+          if (email.toLowerCase().includes('admin')) currentUserRole = 'admin';
+        }
+      } else {
+        if (email.toLowerCase().includes('admin')) currentUserRole = 'admin';
+      }
+
+      applyRolePermissions(currentUserRole, email);
+      showAppScreen();
+      startCloudSync();
+    }
+
+    function applyRolePermissions(role, email) {
+      const badge = document.getElementById('userRoleBadge');
+      const emailEl = document.getElementById('userEmailText');
+      const btnReport = document.getElementById('btnTopReport');
+
+      if (badge) {
+        badge.innerText = role === 'admin' ? 'Administrador' : 'Cajero';
+        badge.className = role === 'admin' 
+          ? "text-[10px] px-2 py-0.5 rounded-full font-bold bg-indigo-100 text-indigo-800 border border-indigo-200"
+          : "text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200";
+      }
+      if (emailEl) emailEl.innerText = email || '';
+
+      // Ocultar botón de reporte a cajeros
+      if (btnReport) {
+        if (role === 'cashier') btnReport.classList.add('hidden');
+        else btnReport.classList.remove('hidden');
+      }
+
+      // Desactivar campos de costo en el formulario de producto si es cajero
+      const costFields = document.querySelectorAll('.cost-field');
+      costFields.forEach(el => {
+        if (role === 'cashier') el.classList.add('hidden');
+        else el.classList.remove('hidden');
+      });
+
+      // Ocultar resúmenes de ganancia y costo en el modal de factura
+      const costSummaries = document.querySelectorAll('.cost-summary, .profit-summary');
+      costSummaries.forEach(el => {
+        if (role === 'cashier') el.classList.add('hidden');
+        else el.classList.remove('hidden');
+      });
+    }
+
+    function updateExchangeRate(newRate) {
+      if (currentUserRole === 'cashier') {
+        showToast('Solo administradores pueden modificar la tasa del día', 'error');
+        document.getElementById('exchangeRateInput').value = exchangeRate.toFixed(2);
+        return;
+      }
+
+      const parsed = parseFloat(newRate);
+      if (parsed > 0) {
+        exchangeRate = parsed;
+        localStorage.setItem(RATE_KEY, String(parsed));
+        refreshDashboard();
+        renderProductsTable();
+        calculateAllSaleTotals();
+        calculatePaymentSplits();
+        showToast(`Tasa actualizada: Bs. ${exchangeRate.toFixed(2)} / USD`, 'info');
+      }
+    }
 
     function showLoginScreen() {
       document.getElementById('loginScreen').classList.remove('hidden');
@@ -843,7 +1070,7 @@
         btnText.innerText = "Verificando...";
         errorBox.classList.add('hidden');
         await auth.signInWithEmailAndPassword(email, password);
-        showToast(`Bienvenido a Pruebas`, 'success');
+        showToast(`Bienvenido al Sistema`, 'success');
       } catch (error) {
         console.error("Error al iniciar sesión:", error);
         errorText.innerText = "Correo o contraseña incorrectos en pruebas-ccc-e1f3e.";
@@ -868,6 +1095,7 @@
     function togglePasswordVisibility() {
       const input = document.getElementById('loginPassword');
       const icon = document.getElementById('eyeIcon');
+      if (!input || !icon) return;
       if (input.type === 'password') {
         input.type = 'text';
         icon.className = 'fa-regular fa-eye-slash text-sm text-indigo-400';
@@ -897,6 +1125,11 @@
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('saleDate').value = today;
       document.getElementById('paymentDate').value = today;
+
+      const nextDue = new Date();
+      nextDue.setDate(nextDue.getDate() + 15);
+      const dueDateEl = document.getElementById('saleDueDate');
+      if (dueDateEl) dueDateEl.value = nextDue.toISOString().split('T')[0];
     }
 
     function startCloudSync() {
@@ -992,6 +1225,11 @@
     }
 
     async function confirmDeleteProduct(prodId) {
+      if (currentUserRole === 'cashier') {
+        showToast('Permiso denegado: Los cajeros no pueden eliminar productos', 'error');
+        return;
+      }
+
       const prod = appData.products.find(p => String(p.id) === String(prodId));
       if (!prod) return;
 
@@ -1018,6 +1256,12 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
+      // Ocultar cabeceras de costo y ganancia si es cajero
+      const costHeader = document.querySelector('th.cost-col');
+      const profitHeader = document.querySelector('th.profit-col');
+      if (costHeader) costHeader.style.display = currentUserRole === 'cashier' ? 'none' : '';
+      if (profitHeader) profitHeader.style.display = currentUserRole === 'cashier' ? 'none' : '';
+
       let totalProducts = appData.products.length;
       let totalInventoryVal = 0;
       let lowStockCount = 0;
@@ -1029,6 +1273,7 @@
 
       document.getElementById('statTotalProducts').innerText = totalProducts;
       document.getElementById('statInventoryValue').innerText = `$${formatCurrency(totalInventoryVal)}`;
+      document.getElementById('statInventoryValueBs').innerText = `Bs. ${formatCurrency(totalInventoryVal * exchangeRate)}`;
       document.getElementById('statLowStockCount').innerText = lowStockCount;
 
       const filtered = appData.products.filter(p => {
@@ -1048,6 +1293,15 @@
         const isLow = (p.stock || 0) < 3;
         const profit = Math.max(0, (p.price || 0) - (p.cost || 0));
 
+        // Columnas condicionales
+        const costCell = currentUserRole === 'cashier' ? '' : `<td class="py-3 px-4 text-right text-slate-600 font-medium">$${formatCurrency(p.cost)}</td>`;
+        const profitCell = currentUserRole === 'cashier' ? '' : `<td class="py-3 px-4 text-right font-bold text-emerald-600">+$${formatCurrency(profit)}</td>`;
+        const deleteBtn = currentUserRole === 'cashier' ? '' : `
+          <button type="button" onclick="confirmDeleteProduct('${p.id}')" title="Eliminar Producto" class="p-1.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition">
+            <i class="fa-regular fa-trash-can"></i>
+          </button>
+        `;
+
         tr.innerHTML = `
           <td class="py-3 px-4 sm:px-6">
             <div class="font-bold text-slate-800">${p.name}</div>
@@ -1058,17 +1312,18 @@
               ${p.stock || 0} unid.
             </span>
           </td>
-          <td class="py-3 px-4 text-right text-slate-600 font-medium">$${formatCurrency(p.cost)}</td>
-          <td class="py-3 px-4 text-right font-black text-slate-900">$${formatCurrency(p.price)}</td>
-          <td class="py-3 px-4 text-right font-bold text-emerald-600">+$${formatCurrency(profit)}</td>
+          ${costCell}
+          <td class="py-3 px-4 text-right">
+            <div class="font-black text-slate-900">$${formatCurrency(p.price)}</div>
+            <div class="text-[10px] text-slate-400 font-bold">Bs. ${formatCurrency(p.price * exchangeRate)}</div>
+          </td>
+          ${profitCell}
           <td class="py-3 px-4 sm:px-6 text-center">
             <div class="flex items-center justify-center gap-1.5">
               <button type="button" onclick="openProductModal('${p.id}')" title="Editar Producto" class="p-1.5 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
-              <button type="button" onclick="confirmDeleteProduct('${p.id}')" title="Eliminar Producto" class="p-1.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition">
-                <i class="fa-regular fa-trash-can"></i>
-              </button>
+              ${deleteBtn}
             </div>
           </td>
         `;
@@ -1076,7 +1331,7 @@
       });
     }
 
-    // FACTURACIÓN CON VINCULACIÓN A INVENTARIO
+    // FACTURACIÓN
     function getNextInvoiceNumber() {
       const sales = appData.transactions.filter(t => t.type === 'SALE');
       let maxNumber = 0;
@@ -1102,6 +1357,10 @@
         catalogOptions += `<option value="${p.id}" data-cost="${p.cost}" data-price="${p.price}" data-name="${p.name}" data-stock="${p.stock}" ${isSelected}>${p.name} (Stock: ${p.stock}) - $${formatCurrency(p.price)}</option>`;
       });
 
+      const costInputHtml = currentUserRole === 'cashier' 
+        ? `<td class="cost-col py-2 px-1 w-24 text-right align-top pt-2.5 hidden"><input type="hidden" class="prod-cost" value="${cost}"></td>`
+        : `<td class="cost-col py-2 px-1 w-24 text-right align-top pt-2.5"><input type="number" min="0" step="0.01" class="prod-cost w-full px-1.5 py-1 text-xs text-right rounded-lg border border-slate-200 focus:ring-1 focus:ring-purple-500" placeholder="0.00" value="${cost}" oninput="calculateSaleRow('${rowId}')"></td>`;
+
       const tr = document.createElement('tr');
       tr.id = rowId;
       tr.className = "hover:bg-purple-50/50 transition";
@@ -1116,9 +1375,7 @@
         <td class="py-2 px-1 text-center align-top pt-2.5">
           <input type="number" min="1" step="1" class="prod-qty w-full px-1.5 py-1 text-xs text-center rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-purple-500 font-bold" value="${qty}" oninput="calculateSaleRow('${rowId}')" required>
         </td>
-        <td class="py-2 px-1 text-right align-top pt-2.5">
-          <input type="number" min="0" step="0.01" class="prod-cost w-full px-1.5 py-1 text-xs text-right rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-purple-500" placeholder="0.00" value="${cost}" oninput="calculateSaleRow('${rowId}')">
-        </td>
+        ${costInputHtml}
         <td class="py-2 px-1 text-right align-top pt-2.5">
           <input type="number" min="0.01" step="0.01" class="prod-price w-full px-1.5 py-1 text-xs text-right rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-purple-500 font-bold text-slate-800" placeholder="0.00" value="${price}" oninput="calculateSaleRow('${rowId}')" required>
         </td>
@@ -1128,6 +1385,11 @@
         </td>
       `;
       tbody.appendChild(tr);
+
+      // Ocultar cabecera de costo en la tabla de factura si es cajero
+      const tableCostHeader = document.querySelector('#modalSale th.cost-col');
+      if (tableCostHeader) tableCostHeader.style.display = currentUserRole === 'cashier' ? 'none' : '';
+
       calculateSaleRow(rowId);
     }
 
@@ -1188,12 +1450,15 @@
       document.getElementById('saleSummaryCost').innerText = `$${formatCurrency(totalCost)}`;
       document.getElementById('saleSummaryProfit').innerText = `$${formatCurrency(totalProfit)}`;
       document.getElementById('saleSummaryTotal').innerText = `$${formatCurrency(totalSale)}`;
+      document.getElementById('saleSummaryTotalBs').innerText = `Bs. ${formatCurrency(totalSale * exchangeRate)}`;
     }
 
     async function handleSaveSale(e) {
       if (e) e.preventDefault();
       const clientId = document.getElementById('saleClientId')?.value;
       const date = document.getElementById('saleDate')?.value;
+      const dueDate = document.getElementById('saleDueDate')?.value;
+      const installments = parseInt(document.getElementById('saleInstallments')?.value) || 1;
       const notes = document.getElementById('saleNotes')?.value.trim() || '';
       const rows = document.querySelectorAll('#saleProductsTableBody tr');
 
@@ -1242,6 +1507,8 @@
         brand: BRAND_NAME,
         invoiceCode,
         date,
+        dueDate: dueDate || date,
+        installments,
         concept,
         items,
         totalCost: Number(totalCost.toFixed(2)),
@@ -1268,7 +1535,7 @@
 
       if (batch && db) {
         batch.set(db.collection("transactions").doc(docId), newTx);
-        batch.commit().catch(err => console.error("Error al descontar stock en Firebase:", err));
+        batch.commit().catch(err => console.error("Error al descontar stock:", err));
       }
 
       closeModalDirect('modalSale');
@@ -1286,12 +1553,104 @@
       }
     }
 
-    // GESTIÓN DE ABONOS
+    // ==========================================
+    // MÓDULO DE PAGOS MIXTOS FRACCIONADOS
+    // ==========================================
+    function addPaymentSplitRow(method = 'Efectivo ($ USD)', rawVal = '', ref = '') {
+      const tbody = document.getElementById('paymentSplitRowsBody');
+      if (!tbody) return;
+      const rowId = 'split_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+
+      const tr = document.createElement('tr');
+      tr.id = rowId;
+      tr.className = "hover:bg-emerald-50/50 transition";
+      tr.innerHTML = `
+        <td class="py-2 px-2">
+          <select class="split-method w-full px-2 py-1 text-xs rounded-lg border border-slate-200 bg-white font-medium text-slate-700 focus:ring-1 focus:ring-fintech-500" onchange="onSplitMethodRowChanged('${rowId}')">
+            <option value="Efectivo ($ USD)" ${method === 'Efectivo ($ USD)' ? 'selected' : ''}>💵 Efectivo ($ USD)</option>
+            <option value="Bolívares (Bs.)" ${method === 'Bolívares (Bs.)' ? 'selected' : ''}>🇻🇪 Bolívares (Bs.)</option>
+            <option value="Zelle" ${method === 'Zelle' ? 'selected' : ''}>🇺🇸 Zelle</option>
+            <option value="USDT (Binance)" ${method === 'USDT (Binance)' ? 'selected' : ''}>🪙 USDT</option>
+            <option value="Otro" ${method === 'Otro' ? 'selected' : ''}>💳 Otro</option>
+          </select>
+        </td>
+        <td class="py-2 px-2">
+          <div class="relative">
+            <span class="split-curr-badge absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">$</span>
+            <input type="number" step="0.01" min="0.01" class="split-input-val w-full pl-6 pr-2 py-1 text-xs font-bold text-slate-800 rounded-lg border border-slate-200 focus:ring-1 focus:ring-fintech-500" placeholder="0.00" value="${rawVal}" oninput="calculatePaymentSplits()">
+          </div>
+        </td>
+        <td class="py-2 px-2 text-right">
+          <span class="split-usd-equiv font-black text-emerald-700 text-xs">$0.00</span>
+        </td>
+        <td class="py-2 px-2">
+          <input type="text" class="split-ref w-full px-2 py-1 text-xs rounded-lg border border-slate-200 focus:ring-1 focus:ring-fintech-500" placeholder="Ej. Zelle #4590, Ref 1234" value="${ref}">
+        </td>
+        <td class="py-2 px-1 text-center">
+          <button type="button" onclick="removePaymentSplitRow('${rowId}')" class="text-slate-300 hover:text-rose-600 transition p-1 text-sm"><i class="fa-regular fa-trash-can"></i></button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      onSplitMethodRowChanged(rowId);
+    }
+
+    function removePaymentSplitRow(rowId) {
+      const tbody = document.getElementById('paymentSplitRowsBody');
+      const row = document.getElementById(rowId);
+      if (row && tbody.children.length > 1) {
+        row.remove();
+        calculatePaymentSplits();
+      } else {
+        showToast('Debes mantener al menos un método de pago', 'info');
+      }
+    }
+
+    function onSplitMethodRowChanged(rowId) {
+      const row = document.getElementById(rowId);
+      if (!row) return;
+      const method = row.querySelector('.split-method').value;
+      const badge = row.querySelector('.split-curr-badge');
+      if (badge) {
+        badge.innerText = (method === 'Bolívares (Bs.)') ? 'Bs.' : '$';
+      }
+      calculatePaymentSplits();
+    }
+
+    function calculatePaymentSplits() {
+      const tbody = document.getElementById('paymentSplitRowsBody');
+      if (!tbody) return;
+      const rows = tbody.querySelectorAll('tr');
+
+      let grandTotalUSD = 0;
+
+      rows.forEach(r => {
+        const method = r.querySelector('.split-method')?.value;
+        const val = parseFloat(r.querySelector('.split-input-val')?.value) || 0;
+        let usdVal = 0;
+
+        if (method === 'Bolívares (Bs.)') {
+          usdVal = exchangeRate > 0 ? (val / exchangeRate) : 0;
+        } else {
+          usdVal = val;
+        }
+
+        const equivEl = r.querySelector('.split-usd-equiv');
+        if (equivEl) equivEl.innerText = `$${formatCurrency(usdVal)}`;
+
+        grandTotalUSD += usdVal;
+      });
+
+      document.getElementById('paymentSplitTotalUSD').innerText = `$${formatCurrency(grandTotalUSD)} USD`;
+      document.getElementById('paymentSplitTotalBs').innerText = `Bs. ${formatCurrency(grandTotalUSD * exchangeRate)}`;
+
+      validatePaymentAmountStrictly(grandTotalUSD);
+    }
+
     function onPaymentClientChanged() {
       const clientId = document.getElementById('paymentClientId')?.value;
       const invoiceSelect = document.getElementById('paymentInvoiceId');
       const debtLabel = document.getElementById('paymentSelectedBrandDebtAmount');
-      const debtLabelText = document.getElementById('paymentDebtLabelText');
+      const debtLabelBs = document.getElementById('paymentSelectedBrandDebtAmountBs');
       const btn = document.getElementById('btnSubmitPayment');
 
       if (!invoiceSelect) return;
@@ -1299,6 +1658,7 @@
 
       if (!clientId) {
         if (debtLabel) debtLabel.innerText = "$0.00 USD";
+        if (debtLabelBs) debtLabelBs.innerText = "Bs. 0.00";
         if (btn) btn.disabled = true;
         return;
       }
@@ -1318,36 +1678,46 @@
       if (pendingCount === 0) {
         invoiceSelect.innerHTML = '<option value="">-- Este cliente no tiene facturas con saldo pendiente --</option>';
         if (debtLabel) debtLabel.innerText = "$0.00 USD";
+        if (debtLabelBs) debtLabelBs.innerText = "Bs. 0.00";
         if (btn) btn.disabled = true;
       } else {
-        if (debtLabelText) debtLabelText.innerText = "Saldo Pendiente de la Factura:";
         if (debtLabel) debtLabel.innerText = "Selecciona una factura";
       }
 
-      validatePaymentAmountStrictly();
+      calculatePaymentSplits();
     }
 
     function onPaymentInvoiceChanged() {
       const invoiceId = document.getElementById('paymentInvoiceId')?.value;
       const debtLabel = document.getElementById('paymentSelectedBrandDebtAmount');
-      const debtLabelText = document.getElementById('paymentDebtLabelText');
+      const debtLabelBs = document.getElementById('paymentSelectedBrandDebtAmountBs');
 
       if (invoiceId) {
         const bal = getInvoiceBalance(invoiceId);
-        if (debtLabelText) debtLabelText.innerText = "Saldo Pendiente de la Factura:";
         if (debtLabel) debtLabel.innerText = `$${formatCurrency(bal)} USD`;
+        if (debtLabelBs) debtLabelBs.innerText = `Bs. ${formatCurrency(bal * exchangeRate)}`;
       } else {
         if (debtLabel) debtLabel.innerText = "$0.00 USD";
+        if (debtLabelBs) debtLabelBs.innerText = "Bs. 0.00";
       }
-      validatePaymentAmountStrictly();
+      calculatePaymentSplits();
     }
 
-    function validatePaymentAmountStrictly() {
+    function validatePaymentAmountStrictly(computedTotalUSD = null) {
       const invoiceId = document.getElementById('paymentInvoiceId')?.value;
-      const amountInput = document.getElementById('paymentAmountUSD')?.value.trim();
-      const amount = parseFloat(amountInput) || 0;
       const err = document.getElementById('paymentAmountErrorBox');
       const btn = document.getElementById('btnSubmitPayment');
+
+      let totalUSD = computedTotalUSD;
+      if (totalUSD === null) {
+        const rows = document.querySelectorAll('#paymentSplitRowsBody tr');
+        totalUSD = 0;
+        rows.forEach(r => {
+          const m = r.querySelector('.split-method')?.value;
+          const v = parseFloat(r.querySelector('.split-input-val')?.value) || 0;
+          totalUSD += (m === 'Bolívares (Bs.)' && exchangeRate > 0) ? (v / exchangeRate) : v;
+        });
+      }
 
       if (!invoiceId) {
         if (err) err.classList.add('hidden');
@@ -1357,15 +1727,15 @@
 
       const maxAllowed = getInvoiceBalance(invoiceId);
 
-      if (!amountInput || amount <= 0) {
+      if (totalUSD <= 0) {
         if (err) err.classList.add('hidden');
         if (btn) btn.disabled = true;
         return;
       }
 
-      if (amount > maxAllowed) {
+      if (totalUSD > (maxAllowed + 0.01)) {
         if (err) {
-          err.innerText = `El monto excede el saldo de la factura ($${formatCurrency(maxAllowed)} USD)`;
+          err.innerText = `El monto total ($${formatCurrency(totalUSD)} USD) excede el saldo de la factura ($${formatCurrency(maxAllowed)} USD)`;
           err.classList.remove('hidden');
         }
         if (btn) btn.disabled = true;
@@ -1380,18 +1750,53 @@
       const clientId = document.getElementById('paymentClientId')?.value;
       const invoiceId = document.getElementById('paymentInvoiceId')?.value;
       const date = document.getElementById('paymentDate')?.value;
-      const amount = parseFloat(document.getElementById('paymentAmountUSD')?.value) || 0;
-      const method = document.getElementById('paymentMethod')?.value;
-      const ref = document.getElementById('paymentRef')?.value.trim();
-      const notes = document.getElementById('paymentNotes')?.value.trim();
+      const notes = document.getElementById('paymentNotes')?.value.trim() || '';
+      const rows = document.querySelectorAll('#paymentSplitRowsBody tr');
 
-      if (!clientId || !invoiceId || amount <= 0) {
-        showToast('Selecciona cliente, factura y monto', 'error');
+      if (!clientId || !invoiceId || rows.length === 0) {
+        showToast('Selecciona cliente, factura y añade los métodos de pago', 'error');
         return;
       }
 
+      const paymentSplits = [];
+      let grandTotalUSD = 0;
+      let grandTotalBs = 0;
+
+      for (const r of rows) {
+        const method = r.querySelector('.split-method')?.value;
+        const val = parseFloat(r.querySelector('.split-input-val')?.value) || 0;
+        const ref = r.querySelector('.split-ref')?.value.trim() || '-';
+
+        if (val <= 0) {
+          showToast('Cada método de pago añadido debe tener un monto mayor a 0', 'error');
+          return;
+        }
+
+        let usdAmount = 0;
+        let bsAmount = 0;
+
+        if (method === 'Bolívares (Bs.)') {
+          bsAmount = val;
+          usdAmount = Number((val / exchangeRate).toFixed(2));
+        } else {
+          usdAmount = Number(val.toFixed(2));
+          bsAmount = Number((val * exchangeRate).toFixed(2));
+        }
+
+        grandTotalUSD += usdAmount;
+        grandTotalBs += bsAmount;
+
+        paymentSplits.push({
+          method,
+          inputAmount: val,
+          amountUSD: usdAmount,
+          amountBs: bsAmount,
+          ref
+        });
+      }
+
       const maxAllowed = getInvoiceBalance(invoiceId);
-      if (amount > maxAllowed) {
+      if (grandTotalUSD > (maxAllowed + 0.01)) {
         showToast(`El monto excede el saldo de la factura ($${formatCurrency(maxAllowed)} USD)`, 'error');
         return;
       }
@@ -1401,6 +1806,12 @@
       const concept = `Abono a ${invCode}`;
       const docId = db ? db.collection("transactions").doc().id : 'tx_' + Date.now();
 
+      const summaryMethod = paymentSplits.length === 1 
+        ? paymentSplits[0].method 
+        : `Pago Mixto (${paymentSplits.map(s => s.method.split(' ')[0]).join(' + ')})`;
+
+      const summaryRef = paymentSplits.map(s => s.ref !== '-' ? s.ref : '').filter(Boolean).join(', ') || 'Comprobante';
+
       const newTx = {
         id: docId,
         clientId: String(clientId),
@@ -1409,10 +1820,13 @@
         brand: BRAND_NAME,
         date,
         concept,
-        amount: Number(amount.toFixed(2)),
-        method,
-        ref: ref || 'Comprobante',
-        notes: notes || '',
+        amount: Number(grandTotalUSD.toFixed(2)),
+        amountBs: Number(grandTotalBs.toFixed(2)),
+        appliedRate: exchangeRate,
+        method: summaryMethod,
+        ref: summaryRef,
+        splits: paymentSplits,
+        notes,
         createdAt: Date.now()
       };
 
@@ -1439,7 +1853,184 @@
       }
     }
 
-    // CLIENTES
+    // CIERRE Y ARQUEO DE CAJA
+    let cashRegisterData = { date: '', totalUSD: 0, totalBs: 0, expectedCashUSD: 0, methods: {} };
+
+    function openCashRegisterModal() {
+      const today = new Date().toISOString().split('T')[0];
+      const dateInput = document.getElementById('cashRegisterDate');
+      if (dateInput) dateInput.value = today;
+      document.getElementById('crPhysicalCashUSD').value = '';
+      document.getElementById('crPhysicalCashBs').value = '';
+      calculateCashRegister();
+      openModalDirect('modalCashRegister');
+    }
+
+    function calculateCashRegister() {
+      const date = document.getElementById('cashRegisterDate')?.value || new Date().toISOString().split('T')[0];
+      const tbody = document.getElementById('cashRegisterMethodsBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const payments = appData.transactions.filter(t => t.type === 'PAYMENT' && t.date === date);
+
+      const methodGroups = {
+        'Efectivo ($ USD)': { count: 0, usd: 0, bs: 0 },
+        'Bolívares (Bs.)': { count: 0, usd: 0, bs: 0 },
+        'Zelle': { count: 0, usd: 0, bs: 0 },
+        'USDT (Binance)': { count: 0, usd: 0, bs: 0 },
+        'Otro': { count: 0, usd: 0, bs: 0 }
+      };
+
+      let grandTotalUSD = 0;
+      let grandTotalBs = 0;
+
+      payments.forEach(p => {
+        // Si tiene splits, se suman al desglose individual de cada canal
+        if (p.splits && Array.isArray(p.splits) && p.splits.length > 0) {
+          p.splits.forEach(s => {
+            const m = s.method || 'Otro';
+            if (!methodGroups[m]) methodGroups[m] = { count: 0, usd: 0, bs: 0 };
+            methodGroups[m].count++;
+            methodGroups[m].usd += (parseFloat(s.amountUSD) || 0);
+            methodGroups[m].bs += (parseFloat(s.amountBs) || 0);
+          });
+          grandTotalUSD += (parseFloat(p.amount) || 0);
+          grandTotalBs += (parseFloat(p.amountBs) || 0);
+        } else {
+          const m = p.method || 'Otro';
+          if (!methodGroups[m]) methodGroups[m] = { count: 0, usd: 0, bs: 0 };
+          const amountUSD = parseFloat(p.amount) || 0;
+          const amountBs = parseFloat(p.amountBs) || (amountUSD * (p.appliedRate || exchangeRate));
+          methodGroups[m].count++;
+          methodGroups[m].usd += amountUSD;
+          methodGroups[m].bs += amountBs;
+          grandTotalUSD += amountUSD;
+          grandTotalBs += amountBs;
+        }
+      });
+
+      Object.keys(methodGroups).forEach(mName => {
+        const item = methodGroups[mName];
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-bold text-slate-800">${mName}</td>
+          <td class="py-2.5 px-3 text-center text-slate-500">${item.count}</td>
+          <td class="py-2.5 px-3 text-right font-black text-slate-900">$${formatCurrency(item.usd)}</td>
+          <td class="py-2.5 px-3 text-right font-semibold text-slate-500">Bs. ${formatCurrency(item.bs)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('crTotalCount').innerText = payments.length;
+      document.getElementById('crTotalUSD').innerText = `$${formatCurrency(grandTotalUSD)}`;
+      document.getElementById('crTotalBs').innerText = `Bs. ${formatCurrency(grandTotalBs)}`;
+
+      cashRegisterData = {
+        date,
+        totalUSD: grandTotalUSD,
+        totalBs: grandTotalBs,
+        expectedCashUSD: methodGroups['Efectivo ($ USD)'].usd,
+        methods: methodGroups
+      };
+
+      calculateDifference();
+    }
+
+    function calculateDifference() {
+      const physicalUSD = parseFloat(document.getElementById('crPhysicalCashUSD')?.value) || 0;
+      const expectedUSD = cashRegisterData.expectedCashUSD || 0;
+      const diffUSD = physicalUSD - expectedUSD;
+      const diffEl = document.getElementById('crDifferenceText');
+      const boxEl = document.getElementById('crDifferenceBox');
+
+      if (!document.getElementById('crPhysicalCashUSD')?.value) {
+        if (diffEl) { diffEl.innerText = "$0.00 USD"; diffEl.className = "text-sm font-black text-slate-700"; }
+        if (boxEl) boxEl.className = "p-3 rounded-xl border text-xs font-bold flex justify-between items-center bg-white border-slate-200";
+        return;
+      }
+
+      if (Math.abs(diffUSD) <= 0.01) {
+        diffEl.innerText = "Cuadre Exacto ($0.00)";
+        diffEl.className = "text-sm font-black text-emerald-600";
+        boxEl.className = "p-3 rounded-xl border text-xs font-bold flex justify-between items-center bg-emerald-50 border-emerald-300";
+      } else if (diffUSD > 0) {
+        diffEl.innerText = `+${formatCurrency(diffUSD)} USD (Sobrante)`;
+        diffEl.className = "text-sm font-black text-indigo-700";
+        boxEl.className = "p-3 rounded-xl border text-xs font-bold flex justify-between items-center bg-indigo-50 border-indigo-200";
+      } else {
+        diffEl.innerText = `${formatCurrency(diffUSD)} USD (Faltante)`;
+        diffEl.className = "text-sm font-black text-rose-600";
+        boxEl.className = "p-3 rounded-xl border text-xs font-bold flex justify-between items-center bg-rose-50 border-rose-300";
+      }
+    }
+
+    function printCashRegisterReport() {
+      const physicalUSD = parseFloat(document.getElementById('crPhysicalCashUSD')?.value) || 0;
+      const diffUSD = physicalUSD - cashRegisterData.expectedCashUSD;
+
+      let methodRows = '';
+      Object.keys(cashRegisterData.methods).forEach(mName => {
+        const item = cashRegisterData.methods[mName];
+        methodRows += `
+          <div style="display:flex; justify-content:space-between; padding:3px 0; font-size:11px;">
+            <span>${mName} (${item.count}):</span>
+            <strong>$${formatCurrency(item.usd)}</strong>
+          </div>
+        `;
+      });
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <title>Arqueo de Caja - ${cashRegisterData.date}</title>
+          <style>
+            @page { size: 80mm auto; margin: 4mm; }
+            body { font-family: sans-serif; font-size: 11px; max-width: 290px; color: #1e293b; margin: 0; padding: 10px; }
+            .center { text-align: center; }
+            .line { border-bottom: 1px dashed #94a3b8; margin: 8px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="center">
+            <h2 style="margin:0; font-size:14px; color:#6b21a8;">💎 EPI PREORDER</h2>
+            <p style="margin:2px 0; font-size:10px;">Cierre y Arqueo de Caja Diario</p>
+            <p style="margin:2px 0; font-size:10px;">Fecha: <strong>${formatDate(cashRegisterData.date)}</strong></p>
+          </div>
+          <div class="line"></div>
+          <div>${methodRows}</div>
+          <div class="line"></div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:bold;">
+            <span>TOTAL RECAUDADO:</span>
+            <span>$${formatCurrency(cashRegisterData.totalUSD)} USD</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-top:2px;">
+            <span>Equivalente en Bs.:</span>
+            <span>Bs. ${formatCurrency(cashRegisterData.totalBs)}</span>
+          </div>
+          <div class="line"></div>
+          <div style="display:flex; justify-content:space-between; font-size:11px;">
+            <span>Efectivo Físico Contado:</span>
+            <strong>$${formatCurrency(physicalUSD)}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:bold; color:${diffUSD < 0 ? '#b91c1c' : '#059669'};">
+            <span>Diferencia:</span>
+            <span>${diffUSD >= 0 ? '+' : ''}${formatCurrency(diffUSD)} USD</span>
+          </div>
+          <br><br>
+          <div class="center" style="border-top:1px solid #cbd5e1; padding-top:4px; font-size:9px;">
+            Firma Responsable / Cajero
+          </div>
+        </body>
+        </html>
+      `;
+      executeCleanPrint(printHtml);
+    }
+
+    // ACCIONES DE CLIENTE Y ELIMINACIONES
     function handleSaveClient(e) {
       if (e) e.preventDefault();
       const name = document.getElementById('clientName')?.value.trim();
@@ -1482,6 +2073,11 @@
       document.getElementById('editClientDoc').value = client.doc || '';
       document.getElementById('editClientPhone').value = client.phone || '';
       document.getElementById('editClientAddress').value = client.address || '';
+
+      // Ocultar botón de eliminar cliente si es cajero
+      const delBtn = document.querySelector('#modalEditClient .admin-only');
+      if (delBtn) delBtn.style.display = currentUserRole === 'cashier' ? 'none' : '';
+
       openModalDirect('modalEditClient');
     }
 
@@ -1525,6 +2121,11 @@
     }
 
     async function confirmDeleteClient(clientId) {
+      if (currentUserRole === 'cashier') {
+        showToast('Permiso denegado: Los cajeros no pueden eliminar clientes', 'error');
+        return;
+      }
+
       const client = appData.clients.find(c => String(c.id) === String(clientId));
       if (!client) return;
 
@@ -1564,6 +2165,11 @@
     }
 
     async function confirmDeleteTransaction(txId) {
+      if (currentUserRole === 'cashier') {
+        showToast('Permiso denegado: Los cajeros no pueden anular o borrar facturas/abonos', 'error');
+        return;
+      }
+
       const tx = appData.transactions.find(t => String(t.id) === String(txId));
       if (!tx) return;
 
@@ -1618,7 +2224,7 @@
       showToast('Registro eliminado correctamente', 'info');
     }
 
-    // MÉTRICAS Y TABLAS
+    // CÁLCULOS GENERALES
     function getInvoiceBalance(txId) {
       const saleTx = appData.transactions.find(t => String(t.id) === String(txId) && t.type === 'SALE');
       if (!saleTx) return 0;
@@ -1643,12 +2249,18 @@
     function getClientMetrics(clientId) {
       const clientTxs = appData.transactions.filter(t => String(t.clientId) === String(clientId));
       let totalPurchases = 0, totalPaid = 0, invoicesCount = 0;
+      let hasOverdue = false;
+      const today = new Date().toISOString().split('T')[0];
 
       clientTxs.forEach(t => {
         const amount = parseFloat(t.amount || 0);
         if (t.type === 'SALE') {
           totalPurchases += amount;
           invoicesCount++;
+          const bal = getInvoiceBalance(t.id);
+          if (bal > 0.009 && t.dueDate && t.dueDate < today) {
+            hasOverdue = true;
+          }
         } else if (t.type === 'PAYMENT') {
           totalPaid += amount;
         }
@@ -1658,7 +2270,8 @@
         totalPurchases: Number(totalPurchases.toFixed(2)),
         totalPaid: Number(totalPaid.toFixed(2)),
         totalBalance: Number(Math.max(0, totalPurchases - totalPaid).toFixed(2)),
-        invoicesCount
+        invoicesCount,
+        hasOverdue
       };
     }
 
@@ -1676,7 +2289,9 @@
     function refreshDashboard() {
       const g = getGlobalMetrics();
       document.getElementById('statTotalDebt').innerText = `$${formatCurrency(g.totalDebt)}`;
+      document.getElementById('statTotalDebtBs').innerText = `Bs. ${formatCurrency(g.totalDebt * exchangeRate)}`;
       document.getElementById('statTotalPaid').innerText = `$${formatCurrency(g.totalPaid)}`;
+      document.getElementById('statTotalPaidBs').innerText = `Bs. ${formatCurrency(g.totalPaid * exchangeRate)}`;
       document.getElementById('statDebtorCount').innerText = g.debtorsCount;
       document.getElementById('statTotalClients').innerText = g.totalClients;
 
@@ -1719,6 +2334,7 @@
         const matchesSearch = client.name.toLowerCase().includes(search) || client.doc.toLowerCase().includes(search) || (client.phone && client.phone.includes(search));
         if (!matchesSearch) return false;
         if (filter === 'debt') return m.totalBalance > 0.009;
+        if (filter === 'overdue') return m.hasOverdue;
         if (filter === 'paid') return m.totalBalance <= 0.009;
         return true;
       });
@@ -1738,6 +2354,15 @@
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
 
+        let statusBadge = '';
+        if (m.hasOverdue) {
+          statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-700 border border-rose-300 animate-pulse">⚠️ Cuota Vencida</span>`;
+        } else if (hasDebt) {
+          statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">Al Día con Deuda</span>`;
+        } else {
+          statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">Solvente ($0)</span>`;
+        }
+
         tr.innerHTML = `
           <td class="py-3 px-4 sm:px-6 cursor-pointer" onclick="showClientHistory('${client.id}')">
             <div class="font-bold text-slate-800">${client.name}</div>
@@ -1754,13 +2379,12 @@
           <td class="py-3 px-4 text-right font-medium text-emerald-600 cursor-pointer" onclick="showClientHistory('${client.id}')">
             $${formatCurrency(m.totalPaid)}
           </td>
-          <td class="py-3 px-4 text-right font-black cursor-pointer ${hasDebt ? 'text-rose-600 text-base' : 'text-slate-400'}" onclick="showClientHistory('${client.id}')">
-            $${formatCurrency(m.totalBalance)}
+          <td class="py-3 px-4 text-right cursor-pointer" onclick="showClientHistory('${client.id}')">
+            <div class="font-black ${hasDebt ? 'text-rose-600 text-base' : 'text-slate-400'}">$${formatCurrency(m.totalBalance)}</div>
+            <div class="text-[10px] font-bold text-slate-400">Bs. ${formatCurrency(m.totalBalance * exchangeRate)}</div>
           </td>
           <td class="py-3 px-4 text-center cursor-pointer" onclick="showClientHistory('${client.id}')">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${hasDebt ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}">
-              ${hasDebt ? 'Con Deuda' : 'Al Día'}
-            </span>
+            ${statusBadge}
           </td>
           <td class="py-3 px-4 sm:px-6 text-center">
             <div class="flex items-center justify-center gap-1">
@@ -1793,11 +2417,20 @@
       document.getElementById('detailClientDoc').innerText = client.doc || '';
       document.getElementById('detailClientPhone').innerText = client.phone || '';
 
+      const addrEl = document.getElementById('detailClientAddressText');
+      if (client.address) {
+        addrEl.innerText = '📍 ' + client.address;
+        addrEl.classList.remove('hidden');
+      } else {
+        addrEl.classList.add('hidden');
+      }
+
       const m = getClientMetrics(client.id);
       document.getElementById('detailClientBalance').innerText = `$${formatCurrency(m.totalBalance)}`;
+      document.getElementById('detailClientBalanceBs').innerText = `Bs. ${formatCurrency(m.totalBalance * exchangeRate)}`;
       const badgeEl = document.getElementById('detailClientBadge');
       badgeEl.className = m.totalBalance > 0 ? "text-xs px-2.5 py-0.5 rounded-full font-bold bg-rose-100 text-rose-700" : "text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700";
-      badgeEl.innerText = m.totalBalance > 0 ? "Deudor" : "Al Día";
+      badgeEl.innerText = m.hasOverdue ? "En Mora" : (m.totalBalance > 0 ? "Deudor" : "Al Día");
 
       renderHistoryTransactions();
       openModalDirect('modalClientHistory');
@@ -1812,6 +2445,9 @@
 
       let clientTxs = appData.transactions.filter(t => String(t.clientId) === String(clientId)).sort((a, b) => new Date(a.date) - new Date(b.date));
 
+      if (currentHistoryFilter === 'sales') clientTxs = clientTxs.filter(t => t.type === 'SALE');
+      if (currentHistoryFilter === 'payments') clientTxs = clientTxs.filter(t => t.type === 'PAYMENT');
+
       if (clientTxs.length === 0) {
         if (noHistory) noHistory.classList.remove('hidden');
         return;
@@ -1820,6 +2456,7 @@
       }
 
       const txs = [...clientTxs].reverse();
+      const today = new Date().toISOString().split('T')[0];
 
       txs.forEach(t => {
         const isSale = t.type === 'SALE';
@@ -1830,45 +2467,95 @@
           const invCode = t.invoiceCode || t.ref || 'FACT';
           const invBal = getInvoiceBalance(t.id);
           const isPaid = invBal <= 0.009;
+          const isOverdue = !isPaid && t.dueDate && t.dueDate < today;
+
+          const deleteTxBtn = currentUserRole === 'cashier' ? '' : `
+            <button type="button" onclick="confirmDeleteTransaction('${t.id}')" title="Eliminar" class="p-1.5 text-slate-300 hover:text-rose-600 transition"><i class="fa-regular fa-trash-can"></i></button>
+          `;
 
           tr.innerHTML = `
-            <td class="py-3 px-3 whitespace-nowrap font-bold text-slate-800">${formatDate(t.date)}</td>
+            <td class="py-3 px-3 whitespace-nowrap">
+              <div class="font-bold text-slate-800">${formatDate(t.date)}</div>
+              ${t.dueDate ? `<div class="text-[10px] ${isOverdue ? 'text-rose-600 font-black' : 'text-slate-400'}">Vence: ${formatDate(t.dueDate)}</div>` : ''}
+            </td>
             <td class="py-3 px-3">
               <span class="inline-block px-2 py-1 text-xs font-mono font-bold rounded ${isPaid ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-purple-100 text-purple-800 border border-purple-200'}">
                 <i class="fa-solid fa-file-invoice mr-1 text-[10px]"></i> ${invCode}
               </span>
+              ${t.installments > 1 ? `<div class="text-[10px] text-purple-700 font-bold">${t.installments} Cuotas</div>` : ''}
             </td>
             <td class="py-3 px-3 text-slate-600 font-bold">Factura Crédito</td>
-            <td class="py-3 px-3 text-right font-bold text-slate-800">$${formatCurrency(t.amount)}</td>
-            <td class="py-3 px-3 text-right font-black ${isPaid ? 'text-emerald-600' : 'text-rose-600'}">$${formatCurrency(invBal)}</td>
+            <td class="py-3 px-3 text-right font-bold text-slate-800">
+              <div>$${formatCurrency(t.amount)}</div>
+              <div class="text-[10px] text-slate-400">Bs. ${formatCurrency(t.amount * exchangeRate)}</div>
+            </td>
+            <td class="py-3 px-3 text-right">
+              <div class="font-black ${isPaid ? 'text-emerald-600' : 'text-rose-600'}">$${formatCurrency(invBal)}</div>
+              <div class="text-[10px] text-slate-400 font-bold">Bs. ${formatCurrency(invBal * exchangeRate)}</div>
+            </td>
             <td class="py-3 px-3 text-center">
               <div class="flex items-center justify-center gap-1">
                 ${!isPaid ? `<button type="button" onclick="quickPayInvoice('${t.clientId}', '${t.id}')" title="Abonar a esta Factura" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-bold"><i class="fa-solid fa-hand-holding-dollar"></i></button>` : ''}
                 <button type="button" onclick="printSingleInvoice('${t.id}')" title="Imprimir" class="p-1.5 text-slate-400 hover:text-indigo-600 transition"><i class="fa-solid fa-print"></i></button>
-                <button type="button" onclick="confirmDeleteTransaction('${t.id}')" title="Eliminar" class="p-1.5 text-slate-300 hover:text-rose-600 transition"><i class="fa-regular fa-trash-can"></i></button>
+                ${deleteTxBtn}
               </div>
             </td>
           `;
         } else {
+          let splitsDetailHtml = '';
+          if (t.splits && Array.isArray(t.splits) && t.splits.length > 1) {
+            splitsDetailHtml = `<div class="mt-1 space-y-0.5">` + t.splits.map(s => `
+              <span class="inline-block text-[10px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 mr-1">
+                ${s.method.split(' ')[0]}: $${formatCurrency(s.amountUSD)} ${s.ref !== '-' ? '(' + s.ref + ')' : ''}
+              </span>
+            `).join('') + `</div>`;
+          }
+
+          const deleteTxBtn = currentUserRole === 'cashier' ? '' : `
+            <button type="button" onclick="confirmDeleteTransaction('${t.id}')" title="Eliminar" class="p-1.5 text-slate-300 hover:text-rose-600 transition"><i class="fa-regular fa-trash-can"></i></button>
+          `;
+
           tr.innerHTML = `
             <td class="py-3 px-3 whitespace-nowrap font-bold text-slate-800">${formatDate(t.date)}</td>
             <td class="py-3 px-3">
               <span class="inline-block px-1.5 py-0.5 text-[10px] font-mono font-bold rounded bg-emerald-100 text-emerald-800 border border-emerald-200">ABONO</span>
               <div class="font-medium text-slate-800 mt-0.5">${t.concept}</div>
             </td>
-            <td class="py-3 px-3 text-slate-600 font-semibold">${t.method || 'Abono'}</td>
-            <td class="py-3 px-3 text-right font-bold text-emerald-600">-${formatCurrency(t.amount)}</td>
+            <td class="py-3 px-3 text-slate-600">
+              <div class="font-semibold text-slate-800">${t.method || 'Abono'}</div>
+              ${splitsDetailHtml}
+              ${t.notes ? `<div class="text-[10px] text-slate-400 italic">${t.notes}</div>` : ''}
+            </td>
+            <td class="py-3 px-3 text-right font-bold text-emerald-600">
+              <div>-${formatCurrency(t.amount)} USD</div>
+              ${t.amountBs ? `<div class="text-[10px] text-slate-400 font-semibold">Bs. ${formatCurrency(t.amountBs)}</div>` : ''}
+            </td>
             <td class="py-3 px-3 text-right text-slate-400 italic">Aplicado</td>
             <td class="py-3 px-3 text-center">
               <div class="flex items-center justify-center gap-1">
                 <button type="button" onclick="reprintReceipt('${t.id}')" title="Imprimir Recibo" class="p-1.5 text-slate-400 hover:text-indigo-600 transition"><i class="fa-solid fa-print"></i></button>
-                <button type="button" onclick="confirmDeleteTransaction('${t.id}')" title="Eliminar" class="p-1.5 text-slate-300 hover:text-rose-600 transition"><i class="fa-regular fa-trash-can"></i></button>
+                ${deleteTxBtn}
               </div>
             </td>
           `;
         }
         tbody.appendChild(tr);
       });
+    }
+
+    function setHistoryFilter(filter) {
+      currentHistoryFilter = filter;
+      ['all', 'sales', 'payments'].forEach(type => {
+        const btn = document.getElementById(`btnFilter${type.charAt(0).toUpperCase() + type.slice(1)}`);
+        if (btn) {
+          if (type === filter) {
+            btn.className = "px-3 py-1 text-xs font-semibold rounded-lg bg-white shadow-sm text-slate-800";
+          } else {
+            btn.className = "px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900";
+          }
+        }
+      });
+      renderHistoryTransactions();
     }
 
     // ACCIONES RÁPIDAS
@@ -1887,11 +2574,24 @@
       document.getElementById('saleClientId').value = clientId;
     }
 
+    function triggerSaleFromHistory() {
+      if (!currentClientIdForDetail) return;
+      returnToHistoryOnClose = true;
+      closeModalDirect('modalClientHistory');
+      quickAddSale(currentClientIdForDetail);
+    }
+
     function openGlobalPaymentModal() {
       returnToHistoryOnClose = false;
       document.getElementById('paymentForm').reset();
       setDefaultDates();
       populateClientSelects();
+      
+      const tbody = document.getElementById('paymentSplitRowsBody');
+      if (tbody) {
+        tbody.innerHTML = '';
+        addPaymentSplitRow('Efectivo ($ USD)');
+      }
       onPaymentClientChanged();
       openModalDirect('modalPayment');
     }
@@ -1900,6 +2600,13 @@
       openGlobalPaymentModal();
       const s = document.getElementById('paymentClientId');
       if (s) { s.value = clientId; onPaymentClientChanged(); }
+    }
+
+    function triggerPaymentFromHistory() {
+      if (!currentClientIdForDetail) return;
+      returnToHistoryOnClose = true;
+      closeModalDirect('modalClientHistory');
+      quickAddPayment(currentClientIdForDetail);
     }
 
     function quickPayInvoice(clientId, invoiceId) {
@@ -1923,6 +2630,10 @@
     }
 
     function openBrandReportModal() {
+      if (currentUserRole === 'cashier') {
+        showToast('Permiso denegado: Los cajeros no tienen acceso a los reportes financieros', 'error');
+        return;
+      }
       document.getElementById('reportStartDate').value = '';
       document.getElementById('reportEndDate').value = '';
       applyReportDateFilter();
@@ -2004,7 +2715,93 @@
       document.getElementById('repGlobalDebt').innerText = `$${formatCurrency(totalDebt)}`;
     }
 
-    // UTILIDADES MODALES & FORMATO
+    function sendWhatsAppSummary() {
+      if (!currentClientIdForDetail) return;
+      const client = appData.clients.find(c => String(c.id) === String(currentClientIdForDetail));
+      if (!client) return;
+
+      const m = getClientMetrics(client.id);
+      const cleanPhone = client.phone.replace(/[^0-9]/g, '');
+
+      let msg = `*ESTADO DE CUENTA - ${client.name.toUpperCase()}*\n`;
+      msg += `💎 *EPI PREORDER*\n`;
+      msg += `📅 Fecha: ${new Date().toLocaleDateString('es-ES')}\n\n`;
+      msg += `🧾 Facturas registradas: ${m.invoicesCount}\n`;
+      msg += `🛍️ Total Compras: $${formatCurrency(m.totalPurchases)} USD\n`;
+      msg += `💵 Total Abonado: $${formatCurrency(m.totalPaid)} USD\n`;
+      msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      msg += `📌 *SALDO TOTAL PENDIENTE: $${formatCurrency(m.totalBalance)} USD*\n`;
+      msg += `🇻🇪 *Equivalente en Bolívares: Bs. ${formatCurrency(m.totalBalance * exchangeRate)}*\n`;
+      msg += `(Tasa del día: Bs. ${exchangeRate.toFixed(2)})\n\n`;
+
+      if (m.totalBalance > 0) {
+        msg += `Puede efectuar su abono mediante Efectivo $, Bolívares (Pago Móvil), Zelle o USDT.\n¡Muchas gracias por su preferencia!`;
+      } else {
+        msg += `✨ ¡Felicidades! Su cuenta se encuentra 100% solvente ($0.00).`;
+      }
+
+      window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function printAccountStatement() {
+      if (!currentClientIdForDetail) return;
+      const client = appData.clients.find(c => String(c.id) === String(currentClientIdForDetail));
+      if (!client) return;
+
+      const m = getClientMetrics(client.id);
+      const clientTxs = appData.transactions.filter(t => String(t.clientId) === String(client.id)).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      let rowsHtml = '';
+      clientTxs.forEach(t => {
+        const isSale = t.type === 'SALE';
+        rowsHtml += `
+          <tr style="border-bottom:1px solid #e2e8f0; font-size:11px;">
+            <td style="padding:6px 8px;">${formatDate(t.date)}</td>
+            <td style="padding:6px 8px;"><strong>${isSale ? (t.invoiceCode || t.ref || 'Factura') : 'Abono'}</strong>: ${t.concept}</td>
+            <td style="padding:6px 8px;">${isSale ? 'Factura Crédito' : t.method}</td>
+            <td style="padding:6px 8px; text-align:right; font-weight:bold; color:${isSale ? '#d97706' : '#059669'};">
+              ${isSale ? '+' : '-'}$${formatCurrency(t.amount)}
+            </td>
+          </tr>
+        `;
+      });
+
+      const statementHtml = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <title>Estado de Cuenta - ${client.name}</title>
+          <style>
+            @page { size: A4 portrait; margin: 15mm; }
+            body { font-family: sans-serif; font-size: 12px; color: #0f172a; margin: 0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th { background: #f1f5f9; padding: 8px; text-align: left; font-size: 10px; text-transform: uppercase; border-bottom: 2px solid #cbd5e1; }
+          </style>
+        </head>
+        <body>
+          <h1 style="color:#6b21a8; margin:0;">💎 EPI PREORDER</h1>
+          <p style="margin:2px 0 10px 0; font-size:12px; color:#64748b;">Estado de Cuenta Integral de Facturas y Abonos</p>
+          <p><strong>Cliente:</strong> ${client.name} | <strong>Cédula:</strong> ${client.doc} | <strong>Tel:</strong> ${client.phone}</p>
+          <p><strong>Total Facturado:</strong> $${formatCurrency(m.totalPurchases)} USD | <strong>Total Abonado:</strong> $${formatCurrency(m.totalPaid)} USD | <strong>Deuda Pendiente:</strong> $${formatCurrency(m.totalBalance)} USD (Bs. ${formatCurrency(m.totalBalance * exchangeRate)})</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Concepto / Factura</th>
+                <th>Tipo / Medio</th>
+                <th style="text-align:right;">Monto USD</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </body>
+        </html>
+      `;
+      executeCleanPrint(statementHtml);
+    }
+
+    // UTILIDADES MODALES & IMPRESIÓN
     function openModalDirect(id) {
       const el = document.getElementById(id);
       if (el) { el.classList.remove('hidden'); el.classList.add('flex'); }
@@ -2040,7 +2837,7 @@
       const container = document.getElementById('toastContainer');
       if (!container) return;
       const toast = document.createElement('div');
-      toast.className = `px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold text-white pointer-events-auto ${type === 'success' ? 'bg-emerald-600' : 'bg-purple-600'}`;
+      toast.className = `px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold text-white pointer-events-auto ${type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-rose-600' : 'bg-purple-600')}`;
       toast.innerText = message;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3200);
@@ -2115,7 +2912,8 @@
           <div class="header">
             <h1 style="margin:0; font-size:20px; color:#6b21a8;">💎 EPI PREORDER</h1>
             <p style="margin:2px 0; font-size:11px; color:#64748b;">Factura de Crédito Nº: <strong>${invCode}</strong></p>
-            <p style="margin:2px 0; font-size:11px;">Fecha: <strong>${formatDate(tx.date)}</strong></p>
+            <p style="margin:2px 0; font-size:11px;">Fecha: <strong>${formatDate(tx.date)}</strong> | Vence: <strong>${formatDate(tx.dueDate || tx.date)}</strong></p>
+            <p style="margin:2px 0; font-size:10px; color:#7e22ce;">Tasa oficial aplicada: Bs. ${formatCurrency(exchangeRate)}</p>
           </div>
           <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:15px;">
             <strong>Cliente:</strong> ${client.name || 'Consumidor'} | <strong>Cédula:</strong> ${client.doc || 'N/A'} | <strong>Teléfono:</strong> ${client.phone || 'N/A'}
@@ -2132,7 +2930,8 @@
             <tbody>${itemsRows}</tbody>
           </table>
           <div class="total-box">
-            <span style="font-size:14px; font-weight:900; color:#6b21a8;">TOTAL FACTURA: $${formatCurrency(tx.amount)} USD</span>
+            <div style="font-size:14px; font-weight:900; color:#6b21a8;">TOTAL FACTURA: $${formatCurrency(tx.amount)} USD</div>
+            <div style="font-size:12px; font-weight:bold; color:#64748b;">Equivalente: Bs. ${formatCurrency(tx.amount * exchangeRate)}</div>
           </div>
         </body>
         </html>
@@ -2144,7 +2943,18 @@
       const receiptContainer = document.getElementById('receiptContent');
       const receiptNum = 'REC-' + String(tx.id).replace('tx_', '').slice(-6);
 
-      let refDetail = tx.ref && tx.ref !== 'Comprobante' ? `<div class="flex justify-between"><span class="text-slate-400">Nº Comprobante / Ref:</span><span class="font-bold text-slate-800">${tx.ref}</span></div>` : '';
+      let splitsRows = '';
+      if (tx.splits && Array.isArray(tx.splits) && tx.splits.length > 0) {
+        splitsRows = `<div class="bg-slate-50 p-2.5 rounded-xl space-y-1 text-left my-2 border border-slate-200">
+          <span class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Métodos Aplicados:</span>` +
+          tx.splits.map(s => `
+            <div class="flex justify-between text-[11px]">
+              <span class="text-slate-600 font-medium">${s.method} ${s.ref !== '-' ? '(' + s.ref + ')' : ''}:</span>
+              <strong class="text-slate-800">$${formatCurrency(s.amountUSD)} ${s.method.includes('Bs.') ? '(Bs. ' + formatCurrency(s.amountBs) + ')' : ''}</strong>
+            </div>
+          `).join('') + `</div>`;
+      }
+
       let notesDetail = tx.notes ? `<div class="flex justify-between"><span class="text-slate-400">Nota:</span><span class="text-slate-700 italic">${tx.notes}</span></div>` : '';
 
       receiptContainer.innerHTML = `
@@ -2161,16 +2971,18 @@
           <div class="flex justify-between"><span class="text-slate-400">Cédula:</span><span class="text-slate-700">${client?.doc || ''}</span></div>
           <div class="flex justify-between"><span class="text-slate-400">Fecha:</span><span class="text-slate-700">${formatDate(tx.date)}</span></div>
           <div class="flex justify-between"><span class="text-slate-400">Concepto:</span><span class="font-semibold text-slate-800">${tx.concept}</span></div>
-          <div class="flex justify-between"><span class="text-slate-400">Método:</span><span class="font-semibold text-slate-800">${tx.method}</span></div>
-          ${refDetail}
+          ${splitsRows}
           ${notesDetail}
           <div class="flex justify-between items-center pt-2 border-t border-slate-100">
             <span class="text-sm font-bold text-slate-700">Monto Abonado:</span>
-            <span class="text-base font-black text-emerald-600">$${formatCurrency(tx.amount)} USD</span>
+            <div class="text-right">
+              <span class="text-base font-black text-emerald-600">$${formatCurrency(tx.amount)} USD</span>
+              ${tx.amountBs ? `<div class="text-[10px] text-slate-400 font-bold">Bs. ${formatCurrency(tx.amountBs)}</div>` : ''}
+            </div>
           </div>
           <div class="bg-slate-50 p-2.5 rounded-xl space-y-1 mt-2">
             <div class="flex justify-between text-xs">
-              <span class="font-bold text-slate-700">Saldo Restante Factura:</span>
+              <span class="font-bold text-slate-700">Saldo Restante:</span>
               <span class="font-black ${remainingInvoiceBalance > 0 ? 'text-rose-600' : 'text-emerald-600'}">$${formatCurrency(remainingInvoiceBalance)} USD</span>
             </div>
           </div>
@@ -2197,6 +3009,18 @@
       const remaining = tx.invoiceId ? getInvoiceBalance(tx.invoiceId) : getClientMetrics(client.id).totalBalance;
       const receiptNumber = 'REC-' + String(tx.id).replace('tx_', '').slice(-6);
 
+      let splitRowsHtml = '';
+      if (tx.splits && Array.isArray(tx.splits)) {
+        tx.splits.forEach(s => {
+          splitRowsHtml += `
+            <div style="display:flex; justify-content:space-between; font-size:10px; color:#475569; padding:2px 0;">
+              <span>• ${s.method} ${s.ref !== '-' ? '(' + s.ref + ')' : ''}:</span>
+              <strong>$${formatCurrency(s.amountUSD)} ${s.method.includes('Bs.') ? '(Bs. ' + formatCurrency(s.amountBs) + ')' : ''}</strong>
+            </div>
+          `;
+        });
+      }
+
       const html = `
         <!DOCTYPE html>
         <html lang="es">
@@ -2217,21 +3041,29 @@
         <body>
           <div class="header text-center">
             <h1 class="logo-title">💎 EPI PREORDER</h1>
-            <p style="margin:2px 0; font-size:10px; color:#64748b;">Comprobante de Abono a Factura</p>
+            <p style="margin:2px 0; font-size:10px; color:#64748b;">Comprobante de Abono</p>
             <p style="margin:4px 0 0 0; font-size:11px; font-weight:bold;">${receiptNumber}</p>
           </div>
           <div class="row"><span>Fecha:</span><strong>${formatDate(tx.date)}</strong></div>
           <div class="row"><span>Cliente:</span><strong>${client.name || ''}</strong></div>
           <div class="row"><span>Cédula:</span><strong>${client.doc || ''}</strong></div>
           <div class="row"><span>Concepto:</span><strong>${tx.concept}</strong></div>
-          <div class="row"><span>Método:</span><strong>${tx.method}</strong></div>
-          ${tx.ref && tx.ref !== 'Comprobante' ? `<div class="row"><span>Nº Ref / Comp:</span><strong>${tx.ref}</strong></div>` : ''}
+          <div class="row"><span>Modalidad:</span><strong>${tx.method}</strong></div>
+          ${splitRowsHtml}
           ${tx.notes ? `<div class="row"><span>Nota:</span><span>${tx.notes}</span></div>` : ''}
           <div class="highlight">
-            <div style="font-size:10px; text-transform:uppercase; color:#64748b;">Monto Abonado</div>
+            <div style="font-size:10px; text-transform:uppercase; color:#64748b;">Monto Total Abonado</div>
             <div class="amount">$${formatCurrency(tx.amount)} USD</div>
+            ${tx.amountBs ? `<div style="font-size:11px; font-weight:bold; color:#64748b;">Bs. ${formatCurrency(tx.amountBs)}</div>` : ''}
           </div>
-          <div class="row" style="font-weight:bold; color:#b91c1c;"><span>Saldo Restante Factura:</span><strong>$${formatCurrency(remaining)} USD</strong></div>
+          <div class="row" style="font-weight:bold; color:#b91c1c;">
+            <span>Saldo Restante:</span>
+            <strong>$${formatCurrency(remaining)} USD</strong>
+          </div>
+          <div class="row" style="font-size:10px; color:#64748b;">
+            <span>Equiv. en Bs.:</span>
+            <span>Bs. ${formatCurrency(remaining * exchangeRate)}</span>
+          </div>
         </body>
         </html>
       `;
