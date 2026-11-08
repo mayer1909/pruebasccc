@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EPI PREORDER - Sistema POS & Control de Créditos</title>
+  <title>EPI PREORDER - Pruebas CCC</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <!-- SheetJS (XLSX) -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-  <!-- Firebase SDK Compat -->
+  <!-- Firebase SDK Compat (v10.8.0) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -50,7 +50,7 @@
 
   <div id="toastContainer" class="fixed top-5 right-5 z-[250] flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- 1. PANTALLA DE LOGIN CON FIREBASE AUTH -->
+  <!-- PANTALLA DE LOGIN CON FIREBASE AUTH -->
   <div id="loginScreen" class="fixed inset-0 z-[100] bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 flex items-center justify-center p-4">
     <div id="loginCard" class="w-full max-w-md bg-slate-900/95 border border-slate-800 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 text-white relative overflow-hidden">
       <div class="text-center space-y-2 relative">
@@ -58,7 +58,7 @@
           <i class="fa-solid fa-gem"></i>
         </div>
         <h1 class="text-2xl font-black tracking-tight text-white">EPI PREORDER</h1>
-        <p class="text-xs text-slate-400">Sistema Administrativo & POS</p>
+        <p class="text-xs text-purple-300 font-medium">Entorno: pruebas-ccc-e1f3e</p>
       </div>
 
       <div id="loginErrorMsg" class="hidden p-3 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2">
@@ -71,7 +71,7 @@
           <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Correo Electrónico</label>
           <div class="relative">
             <i class="fa-regular fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
-            <input type="email" id="loginEmail" required autocomplete="email" placeholder="admin@epipreorder.com" class="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+            <input type="email" id="loginEmail" required autocomplete="email" placeholder="usuario@credicontrol.com" class="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
           </div>
         </div>
 
@@ -94,7 +94,7 @@
     </div>
   </div>
 
-  <!-- 2. APLICACIÓN PRINCIPAL -->
+  <!-- APLICACIÓN PRINCIPAL -->
   <div id="mainApp" class="hidden min-h-screen flex-col bg-slate-50 flex-1">
     
     <!-- HEADER -->
@@ -107,12 +107,15 @@
               <i class="fa-solid fa-gem text-lg"></i>
             </div>
             <div>
-              <span class="font-black text-slate-900 tracking-tight text-lg">EPI PREORDER</span>
-              <p class="text-[11px] text-slate-400 hidden sm:block">Control de Cartera, Facturas & Catálogo</p>
+              <div class="flex items-center gap-2">
+                <span class="font-black text-slate-900 tracking-tight text-lg">EPI PREORDER</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-100 text-purple-800 border border-purple-200">Pruebas</span>
+              </div>
+              <p class="text-[11px] text-slate-400 hidden sm:block">Proyecto: pruebas-ccc-e1f3e</p>
             </div>
           </div>
 
-          <!-- NAVEGACIÓN PRINCIPAL (ESTILO FINA) -->
+          <!-- PESTAÑAS (ESTILO FINA) -->
           <nav class="flex items-center bg-slate-100 p-1 rounded-2xl gap-1">
             <button type="button" onclick="switchMainTab('clients')" id="tabBtnClients" class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-bold rounded-xl bg-white text-purple-700 shadow-sm transition flex items-center gap-1.5">
               <i class="fa-solid fa-users"></i>
@@ -151,13 +154,11 @@
       </div>
     </header>
 
-    <!-- CUERPO PRINCIPAL -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
-      <!-- SECCIÓN 1: VISTA DE CLIENTES Y CARTERA -->
+      <!-- VISTA: CLIENTES & CRÉDITO -->
       <div id="viewClients" class="space-y-6">
-        
-        <!-- DASHBOARD STATS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="bg-white p-5 rounded-2xl border border-rose-200 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between">
@@ -199,7 +200,7 @@
             </div>
             <div class="mt-2">
               <h3 id="statTotalClients" class="text-2xl font-black text-indigo-700">0</h3>
-              <p class="text-[11px] text-slate-400">Clientes registrados</p>
+              <p class="text-[11px] text-slate-400">Registrados en la nube</p>
             </div>
           </div>
         </div>
@@ -209,7 +210,7 @@
           <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
               <h2 class="text-lg font-bold text-slate-900">Listado de Clientes y Cuentas por Cobrar</h2>
-              <p class="text-xs text-slate-500">Muestra las facturas emitidas y el saldo pendiente por cada cliente.</p>
+              <p class="text-xs text-slate-500">Facturas emitidas y saldos pendientes en tiempo real.</p>
             </div>
 
             <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
@@ -246,14 +247,12 @@
               <tbody id="clientsTableBody" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
-          <div id="noDataMessage" class="hidden py-12 text-center text-slate-500 text-sm">No se encontraron clientes con los filtros aplicados.</div>
+          <div id="noDataMessage" class="hidden py-12 text-center text-slate-500 text-sm">No se encontraron clientes registrados.</div>
         </div>
       </div>
 
-      <!-- SECCIÓN 2: VISTA DE CATÁLOGO & INVENTARIO (ESTILO FINA) -->
+      <!-- VISTA: CATÁLOGO & STOCK -->
       <div id="viewInventory" class="hidden space-y-6">
-        
-        <!-- INVENTORY STATS -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="bg-white p-5 rounded-2xl border border-purple-200 shadow-sm flex flex-col justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-purple-600">Total Productos</span>
@@ -272,12 +271,11 @@
           </div>
         </div>
 
-        <!-- TABLA DE PRODUCTOS -->
         <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
           <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
               <h2 class="text-lg font-bold text-slate-900">Catálogo de Productos & Existencias</h2>
-              <p class="text-xs text-slate-500">Administra los precios, costos y stock que se descontarán automáticamente al facturar.</p>
+              <p class="text-xs text-slate-500">Los artículos se descuentan automáticamente del stock al emitir una factura.</p>
             </div>
 
             <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
@@ -313,7 +311,7 @@
     </main>
   </div>
 
-  <!-- MODAL: REGISTRAR / EDITAR PRODUCTO EN CATÁLOGO -->
+  <!-- MODAL: REGISTRAR PRODUCTO -->
   <div id="modalProduct" class="fixed inset-0 z-[70] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 modal-backdrop">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform modal-card border border-purple-200">
       <div class="px-6 py-4 border-b border-purple-100 bg-purple-50/60 flex items-center justify-between">
@@ -328,7 +326,7 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre del Producto / Modelo *</label>
-          <input type="text" id="prodFormName" required placeholder="Ej. Vestido Gala Seda" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium">
+          <input type="text" id="prodFormName" required placeholder="Ej. Vestido Seda Floral" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -361,7 +359,7 @@
     </div>
   </div>
 
-  <!-- MODAL: FACTURA / COMPRA A CRÉDITO CON SELECTOR DE CATÁLOGO -->
+  <!-- MODAL: FACTURA / COMPRA A CRÉDITO -->
   <div id="modalSale" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5 modal-backdrop">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[94vh] flex flex-col overflow-hidden modal-card border border-purple-200">
       <div class="px-6 py-4 border-b border-purple-100 bg-gradient-to-r from-purple-50 to-indigo-50 flex items-center justify-between">
@@ -434,7 +432,7 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Notas / Observaciones (Opcional)</label>
-          <input type="text" id="saleNotes" placeholder="Condiciones de pago, garantía o referencia..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <input type="text" id="saleNotes" placeholder="Garantía, condiciones de entrega..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
@@ -447,7 +445,7 @@
     </div>
   </div>
 
-  <!-- MODAL: REGISTRAR ABONO A FACTURA (SOLO POR FACTURA ESPECÍFICA) -->
+  <!-- MODAL: REGISTRAR ABONO A FACTURA -->
   <div id="modalPayment" class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 modal-backdrop">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform modal-card border border-emerald-200">
       <div class="px-6 py-4 border-b border-emerald-100 bg-emerald-50/80 flex items-center justify-between">
@@ -601,7 +599,7 @@
     </div>
   </div>
 
-  <!-- MODAL: HISTORIAL DEL CLIENTE -->
+  <!-- MODAL: HISTORIAL DE CLIENTE -->
   <div id="modalClientHistory" class="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5 modal-backdrop">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden modal-card">
       <div class="p-5 border-b border-slate-200 bg-slate-50/90 flex flex-wrap items-center justify-between gap-4">
@@ -662,7 +660,7 @@
           <i class="fa-solid fa-chart-pie text-2xl text-purple-400"></i>
           <div>
             <h2 class="text-lg font-bold text-white">Reporte Financiero de Facturación</h2>
-            <p class="text-xs text-slate-300">Resumen de ventas, recaudación y ganancias por rango de fecha.</p>
+            <p class="text-xs text-slate-300">Resumen por rango de fecha.</p>
           </div>
         </div>
         <button type="button" onclick="closeModalDirect('modalBrandReport')" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition">
@@ -727,14 +725,14 @@
     </div>
   </div>
 
-  <!-- MODAL: RECIBO DE ABONO -->
+  <!-- MODAL: RECIBO -->
   <div id="modalReceipt" class="fixed inset-0 z-[65] bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 modal-backdrop">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden p-6 space-y-4 modal-card">
       <div id="receiptContent" class="space-y-4 text-center"></div>
       <div class="flex gap-2 pt-2">
         <button type="button" onclick="dismissReceiptModal()" class="w-1/2 py-2 text-sm font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition">Volver</button>
         <button type="button" id="btnPrintReceiptModal" class="w-1/2 py-2 text-sm font-semibold rounded-xl bg-fintech-600 hover:bg-fintech-700 text-white shadow flex items-center justify-center gap-1.5 transition">
-          <i class="fa-solid fa-print"></i> Imprimir Recibo
+          <i class="fa-solid fa-print"></i> Imprimir
         </button>
       </div>
     </div>
@@ -742,18 +740,16 @@
 
   <iframe id="cleanPrintIframe" class="hidden"></iframe>
 
-  <!-- ========================================================================= -->
-  <!-- JAVASCRIPT: LÓGICA GENERAL CON CATÁLOGO E INVENTARIO ESTILO FINA          -->
-  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: LÓGICA VINCULADA AL PROYECTO pruebas-ccc-e1f3e -->
   <script>
-    // CONFIGURACIÓN DE FIREBASE (CREDENCIALES REALES)
+    // CREDENCIALES EXACTAS DE pruebas-ccc-e1f3e
     const firebaseConfig = {
-      apiKey: "AIzaSyAoM-EVa1LTO0mb2Op7uEAoqRDwtijpbeo",
-      authDomain: "credicontrol-usa.firebaseapp.com",
-      projectId: "credicontrol-usa",
-      storageBucket: "credicontrol-usa.firebasestorage.app",
-      messagingSenderId: "268200648228",
-      appId: "1:268200648228:web:781802042978d3ef5b02b1"
+      apiKey: "AIzaSyBlilWdMRegxBiO0UBPhq8HD8xz2dHaaPY",
+      authDomain: "pruebas-ccc-e1f3e.firebaseapp.com",
+      projectId: "pruebas-ccc-e1f3e",
+      storageBucket: "pruebas-ccc-e1f3e.firebasestorage.app",
+      messagingSenderId: "328683290836",
+      appId: "1:328683290836:web:3558abc62897fda9bcbb41"
     };
 
     let db = null;
@@ -763,17 +759,17 @@
         firebase.initializeApp(firebaseConfig);
         auth = firebase.auth();
         db = firebase.firestore();
+        console.log("Conectado con éxito a [pruebas-ccc-e1f3e]");
       }
     } catch (e) {
       console.warn("Modo local activo:", e);
     }
 
-    const STORAGE_KEY = 'credicontrol_usa_data_v2';
+    const STORAGE_KEY = 'credicontrol_pruebas_data_v1';
     const BRAND_NAME = "EPI PREORDER";
 
     let appData = { clients: [], transactions: [], products: [] };
     let currentClientIdForDetail = null;
-    let currentHistoryFilter = 'all';
     let returnToHistoryOnClose = false;
 
     window.onload = function() {
@@ -783,6 +779,7 @@
       if (auth) {
         auth.onAuthStateChanged((user) => {
           if (user) {
+            console.log("Sesión autenticada en Firebase:", user.email);
             showAppScreen();
             startCloudSync();
           } else {
@@ -795,22 +792,21 @@
     };
 
     function showLoginScreen() {
-      const login = document.getElementById('loginScreen');
-      const app = document.getElementById('mainApp');
-      if (login) { login.classList.remove('hidden'); login.classList.add('flex'); }
-      if (app) { app.classList.add('hidden'); app.classList.remove('flex'); }
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('loginScreen').classList.add('flex');
+      document.getElementById('mainApp').classList.add('hidden');
+      document.getElementById('mainApp').classList.remove('flex');
     }
 
     function showAppScreen() {
-      const login = document.getElementById('loginScreen');
-      const app = document.getElementById('mainApp');
-      if (login) { login.classList.add('hidden'); login.classList.remove('flex'); }
-      if (app) { app.classList.remove('hidden'); app.classList.add('flex'); }
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('flex');
+      document.getElementById('mainApp').classList.remove('hidden');
+      document.getElementById('mainApp').classList.add('flex');
       refreshDashboard();
       renderProductsTable();
     }
 
-    // NAVEGACIÓN POR PESTAÑAS (TABS ESTILO FINA)
     function switchMainTab(tab) {
       const viewClients = document.getElementById('viewClients');
       const viewInventory = document.getElementById('viewInventory');
@@ -843,17 +839,15 @@
       if (!email || !password || !auth) return;
 
       try {
-        if (btn) btn.disabled = true;
-        if (btnText) btnText.innerText = "Verificando...";
-        if (errorBox) errorBox.classList.add('hidden');
-
+        btn.disabled = true;
+        btnText.innerText = "Verificando...";
+        errorBox.classList.add('hidden');
         await auth.signInWithEmailAndPassword(email, password);
-        showToast(`Bienvenido al sistema`, 'success');
+        showToast(`Bienvenido a Pruebas`, 'success');
       } catch (error) {
-        if (errorBox) {
-          errorText.innerText = "Correo o contraseña inválidos.";
-          errorBox.classList.remove('hidden');
-        }
+        console.error("Error al iniciar sesión:", error);
+        errorText.innerText = "Correo o contraseña incorrectos en pruebas-ccc-e1f3e.";
+        errorBox.classList.remove('hidden');
         const card = document.getElementById('loginCard');
         if (card) {
           card.classList.remove('shake-anim');
@@ -861,8 +855,8 @@
           card.classList.add('shake-anim');
         }
       } finally {
-        if (btn) btn.disabled = false;
-        if (btnText) btnText.innerText = "Ingresar al Sistema";
+        btn.disabled = false;
+        btnText.innerText = "Ingresar al Sistema";
       }
     }
 
@@ -901,10 +895,8 @@
 
     function setDefaultDates() {
       const today = new Date().toISOString().split('T')[0];
-      const sDate = document.getElementById('saleDate');
-      const pDate = document.getElementById('paymentDate');
-      if (sDate) sDate.value = today;
-      if (pDate) pDate.value = today;
+      document.getElementById('saleDate').value = today;
+      document.getElementById('paymentDate').value = today;
     }
 
     function startCloudSync() {
@@ -931,13 +923,11 @@
           renderProductsTable();
         });
       } catch (err) {
-        console.warn("Error en sincronización Firebase:", err);
+        console.warn("Error en sync cloud:", err);
       }
     }
 
-    // ==========================================
-    // MÓDULO DE CATÁLOGO & INVENTARIO
-    // ==========================================
+    // CATÁLOGO & INVENTARIO
     function openProductModal(prodId = null) {
       const form = document.getElementById('productForm');
       form.reset();
@@ -994,7 +984,7 @@
       }
       saveData();
       renderProductsTable();
-      showToast(`Producto ${name} guardado en inventario`, 'success');
+      showToast(`Producto ${name} guardado`, 'success');
 
       if (db) {
         db.collection("products").doc(docId).set(productPayload).catch(err => console.warn(err));
@@ -1018,7 +1008,7 @@
       appData.products = appData.products.filter(p => String(p.id) !== String(prodId));
       saveData();
       renderProductsTable();
-      showToast('Producto eliminado del inventario', 'info');
+      showToast('Producto eliminado', 'info');
     }
 
     function renderProductsTable() {
@@ -1037,13 +1027,9 @@
         if ((p.stock || 0) < 3) lowStockCount++;
       });
 
-      const pTotalEl = document.getElementById('statTotalProducts');
-      const pValEl = document.getElementById('statInventoryValue');
-      const pLowEl = document.getElementById('statLowStockCount');
-
-      if (pTotalEl) pTotalEl.innerText = totalProducts;
-      if (pValEl) pValEl.innerText = `$${formatCurrency(totalInventoryVal)}`;
-      if (pLowEl) pLowEl.innerText = lowStockCount;
+      document.getElementById('statTotalProducts').innerText = totalProducts;
+      document.getElementById('statInventoryValue').innerText = `$${formatCurrency(totalInventoryVal)}`;
+      document.getElementById('statLowStockCount').innerText = lowStockCount;
 
       const filtered = appData.products.filter(p => {
         return p.name.toLowerCase().includes(search) || (p.sku && p.sku.toLowerCase().includes(search));
@@ -1090,9 +1076,7 @@
       });
     }
 
-    // ==========================================
     // FACTURACIÓN CON VINCULACIÓN A INVENTARIO
-    // ==========================================
     function getNextInvoiceNumber() {
       const sales = appData.transactions.filter(t => t.type === 'SALE');
       let maxNumber = 0;
@@ -1112,7 +1096,6 @@
       if (!tbody) return;
       const rowId = 'prod_row_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
 
-      // Opciones del selector de catálogo
       let catalogOptions = '<option value="">-- Escribir producto libre --</option>';
       appData.products.forEach(p => {
         const isSelected = String(p.id) === String(prodId) ? 'selected' : '';
@@ -1156,13 +1139,9 @@
       const prodId = select.value;
 
       if (prodId) {
-        const name = selectedOpt.getAttribute('data-name');
-        const cost = selectedOpt.getAttribute('data-cost');
-        const price = selectedOpt.getAttribute('data-price');
-
-        row.querySelector('.prod-name').value = name;
-        row.querySelector('.prod-cost').value = cost;
-        row.querySelector('.prod-price').value = price;
+        row.querySelector('.prod-name').value = selectedOpt.getAttribute('data-name');
+        row.querySelector('.prod-cost').value = selectedOpt.getAttribute('data-cost');
+        row.querySelector('.prod-price').value = selectedOpt.getAttribute('data-price');
         row.querySelector('.prod-catalog-id').value = prodId;
       } else {
         row.querySelector('.prod-catalog-id').value = '';
@@ -1205,15 +1184,10 @@
       });
 
       const totalProfit = Math.max(0, totalSale - totalCost);
-      const qEl = document.getElementById('saleSummaryQty');
-      const cEl = document.getElementById('saleSummaryCost');
-      const pEl = document.getElementById('saleSummaryProfit');
-      const tEl = document.getElementById('saleSummaryTotal');
-
-      if (qEl) qEl.innerText = totalQty;
-      if (cEl) cEl.innerText = `$${formatCurrency(totalCost)}`;
-      if (pEl) pEl.innerText = `$${formatCurrency(totalProfit)}`;
-      if (tEl) tEl.innerText = `$${formatCurrency(totalSale)}`;
+      document.getElementById('saleSummaryQty').innerText = totalQty;
+      document.getElementById('saleSummaryCost').innerText = `$${formatCurrency(totalCost)}`;
+      document.getElementById('saleSummaryProfit').innerText = `$${formatCurrency(totalProfit)}`;
+      document.getElementById('saleSummaryTotal').innerText = `$${formatCurrency(totalSale)}`;
     }
 
     async function handleSaveSale(e) {
@@ -1231,7 +1205,6 @@
       const items = [];
       let totalAmount = 0, totalCost = 0;
 
-      // Validar existencias si están en catálogo
       for (const r of rows) {
         const name = r.querySelector('.prod-name')?.value.trim();
         const qty = parseInt(r.querySelector('.prod-qty')?.value) || 1;
@@ -1279,7 +1252,6 @@
         createdAt: Date.now()
       };
 
-      // Descontar del inventario (en local y batch de Firestore)
       const batch = db ? db.batch() : null;
       items.forEach(it => {
         if (it.prodCatalogId) {
@@ -1307,16 +1279,14 @@
       saveData();
       refreshDashboard();
       renderProductsTable();
-      showToast(`Factura ${invoiceCode} emitida y stock actualizado`, 'success');
+      showToast(`Factura ${invoiceCode} emitida exitosamente`, 'success');
 
       if (returnToHistoryOnClose && currentClientIdForDetail) {
         showClientHistory(currentClientIdForDetail);
       }
     }
 
-    // ==========================================
-    // ABONOS A FACTURA
-    // ==========================================
+    // GESTIÓN DE ABONOS
     function onPaymentClientChanged() {
       const clientId = document.getElementById('paymentClientId')?.value;
       const invoiceSelect = document.getElementById('paymentInvoiceId');
@@ -1469,9 +1439,7 @@
       }
     }
 
-    // ==========================================
-    // CLIENTES & ELIMINACIONES ASÍNCRONAS
-    // ==========================================
+    // CLIENTES
     function handleSaveClient(e) {
       if (e) e.preventDefault();
       const name = document.getElementById('clientName')?.value.trim();
@@ -1534,6 +1502,11 @@
       const idx = appData.clients.findIndex(c => String(c.id) === String(id));
       if (idx === -1) return;
 
+      if (appData.clients.some(c => String(c.id) !== String(id) && c.doc.toLowerCase() === doc.toLowerCase())) {
+        showToast('Esa cédula ya pertenece a otro cliente', 'error');
+        return;
+      }
+
       const updated = { ...appData.clients[idx], name, doc, phone, address };
       appData.clients[idx] = updated;
 
@@ -1558,7 +1531,7 @@
       const clientTxs = appData.transactions.filter(t => String(t.clientId) === String(clientId));
       let confirmMsg = `¿Eliminar al cliente ${client.name}?`;
       if (clientTxs.length > 0) {
-        confirmMsg = `El cliente ${client.name} tiene ${clientTxs.length} factura(s)/abono(s). Se eliminarán todos sus movimientos. ¿Deseas continuar?`;
+        confirmMsg = `El cliente ${client.name} tiene ${clientTxs.length} factura(s)/abono(s). Se eliminarán todos sus movimientos. ¿Continuar?`;
       }
 
       if (!confirm(confirmMsg)) return;
@@ -1572,7 +1545,7 @@
           await batch.commit();
         } catch (err) {
           console.error("Error al eliminar en Firestore:", err);
-          showToast('Error de permisos al eliminar en Firebase', 'error');
+          showToast('Error de permisos en Firebase', 'error');
           return;
         }
       }
@@ -1595,13 +1568,12 @@
       if (!tx) return;
 
       const tipoTexto = tx.type === 'SALE' ? `la factura ${tx.invoiceCode || tx.ref}` : 'este abono';
-      if (!confirm(`¿Eliminar ${tipoTexto}? Se recalculará la deuda y se repondrá el stock si correspondía.`)) return;
+      if (!confirm(`¿Eliminar ${tipoTexto}? Se recalculará la deuda y se repondrá el stock.`)) return;
 
       const associatedPayments = tx.type === 'SALE' 
         ? appData.transactions.filter(t => t.type === 'PAYMENT' && String(t.invoiceId) === String(txId))
         : [];
 
-      // Reponer stock si era una venta
       if (tx.type === 'SALE' && tx.items) {
         const batch = db ? db.batch() : null;
         tx.items.forEach(it => {
@@ -1629,7 +1601,7 @@
           }
         } catch (err) {
           console.error("Error al eliminar en Firestore:", err);
-          showToast('Error al eliminar en Firebase', 'error');
+          showToast('Error de permisos en Firebase', 'error');
           return;
         }
       }
@@ -1646,9 +1618,7 @@
       showToast('Registro eliminado correctamente', 'info');
     }
 
-    // ==========================================
     // MÉTRICAS Y TABLAS
-    // ==========================================
     function getInvoiceBalance(txId) {
       const saleTx = appData.transactions.find(t => String(t.id) === String(txId) && t.type === 'SALE');
       if (!saleTx) return 0;
@@ -1705,15 +1675,10 @@
 
     function refreshDashboard() {
       const g = getGlobalMetrics();
-      const td = document.getElementById('statTotalDebt');
-      const tp = document.getElementById('statTotalPaid');
-      const dc = document.getElementById('statDebtorCount');
-      const tc = document.getElementById('statTotalClients');
-
-      if (td) td.innerText = `$${formatCurrency(g.totalDebt)}`;
-      if (tp) tp.innerText = `$${formatCurrency(g.totalPaid)}`;
-      if (dc) dc.innerText = g.debtorsCount;
-      if (tc) tc.innerText = g.totalClients;
+      document.getElementById('statTotalDebt').innerText = `$${formatCurrency(g.totalDebt)}`;
+      document.getElementById('statTotalPaid').innerText = `$${formatCurrency(g.totalPaid)}`;
+      document.getElementById('statDebtorCount').innerText = g.debtorsCount;
+      document.getElementById('statTotalClients').innerText = g.totalClients;
 
       populateClientSelects();
       renderClientsTable();
@@ -1906,9 +1871,7 @@
       });
     }
 
-    // ==========================================
-    // ACCIONES RÁPIDAS & REPORTES
-    // ==========================================
+    // ACCIONES RÁPIDAS
     function openGlobalSaleModal() {
       returnToHistoryOnClose = false;
       document.getElementById('saleForm').reset();
@@ -2041,36 +2004,7 @@
       document.getElementById('repGlobalDebt').innerText = `$${formatCurrency(totalDebt)}`;
     }
 
-    function exportToExcelWorkbook() {
-      try {
-        const clientsData = [["ID", "CÉDULA", "CLIENTE", "TELÉFONO", "FACTURAS", "TOTAL COMPRAS ($)", "TOTAL ABONADO ($)", "SALDO TOTAL ($)", "ESTADO"]];
-        appData.clients.forEach(c => {
-          const m = getClientMetrics(c.id);
-          clientsData.push([c.id, c.doc, c.name, c.phone, m.invoicesCount, m.totalPurchases, m.totalPaid, m.totalBalance, m.totalBalance > 0 ? "DEUDOR" : "AL DÍA"]);
-        });
-
-        const productsData = [["ID", "PRODUCTO", "SKU", "STOCK", "COSTO ($)", "VENTA ($)", "GANANCIA UNIT ($)"]];
-        appData.products.forEach(p => {
-          productsData.push([p.id, p.name, p.sku || '', p.stock || 0, p.cost || 0, p.price || 0, Math.max(0, (p.price || 0) - (p.cost || 0))]);
-        });
-
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(clientsData), "Clientes");
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(productsData), "Inventario");
-
-        const dateSuffix = new Date().toISOString().split('T')[0];
-        XLSX.writeFile(wb, `EPI_PREORDER_${dateSuffix}.xlsx`);
-        showToast('Excel descargado con éxito', 'success');
-      } catch (err) {
-        showToast('Error al exportar a Excel', 'error');
-      }
-    }
-
-    function exportBrandReportToExcel() {
-      exportToExcelWorkbook();
-    }
-
-    // UTILIDADES DE INTERFAZ & MODALES
+    // UTILIDADES MODALES & FORMATO
     function openModalDirect(id) {
       const el = document.getElementById(id);
       if (el) { el.classList.remove('hidden'); el.classList.add('flex'); }
